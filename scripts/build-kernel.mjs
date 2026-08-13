@@ -36,6 +36,10 @@ const result = spawnSync(
     cwd: crateRoot,
     env: process.env,
     stdio: "inherit",
+    // Node refuses to spawn .cmd/.bat directly on Windows since the CVE-2024-27980
+    // fix, so the napi shim needs a shell there. Every argument below is a fixed
+    // literal without spaces, so shell quoting cannot change what runs.
+    shell: process.platform === "win32",
   },
 );
 
