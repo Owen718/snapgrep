@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.svg" alt="Terminal demo: ripgrep takes 147.7 ms to search a 17 MB repository while snapgrep takes 2.1 ms, drawn to true scale" width="820">
+  <img src="assets/demo.gif" alt="Terminal demo: ripgrep takes 147.7 ms to search a 17 MB repository while snapgrep takes 2.1 ms, drawn to true scale" width="820">
 </p>
 
 <p align="center">
