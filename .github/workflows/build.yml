@@ -19,8 +19,11 @@ jobs:
         include:
           - os: macos-14
             target: darwin-arm64
-          - os: macos-13
+          # GitHub's Intel macOS runners are being retired and no longer get
+          # scheduled, so build this one on Apple Silicon instead.
+          - os: macos-14
             target: darwin-x64
+            rust-target: x86_64-apple-darwin
           - os: ubuntu-latest
             target: linux-x64
           - os: ubuntu-24.04-arm
@@ -36,10 +39,13 @@ jobs:
           cache: npm
 
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-target || '' }}
 
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: native/kernel
+          key: ${{ matrix.target }}
 
       # Only the napi CLI is needed to build the addon. Skipping production
       # dependencies keeps this job independent of the agent packages.
@@ -52,8 +58,13 @@ jobs:
         run: npm run build:kernel
         env:
           RUSTFLAGS: --remap-path-prefix=${{ github.workspace }}=/src --remap-path-prefix=${{ runner.temp }}=/tmp
+          SNAPGREP_BUILD_TARGET: ${{ matrix.rust-target || '' }}
 
+      # A cross-compiled addon cannot be loaded by the runner that built it, so
+      # this only runs for native builds. The packaging job checks that every
+      # expected file exists regardless.
       - name: Verify the addon loads
+        if: matrix.rust-target == ''
         shell: bash
         run: |
           set -euo pipefail
@@ -65,6 +76,16 @@ jobs:
             }
             console.log('ABI', b.BINDING_ABI_VERSION, '|', b.bindingTarget());
           "
+
+      - name: Verify the cross-compiled addon has the right architecture
+        if: matrix.rust-target != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls -la native/kernel/binding/
+          file native/kernel/binding/*.node
+          file native/kernel/binding/*.node | grep -q 'x86_64' \
+            || { echo "cross-compiled addon is not x86_64"; exit 1; }
 
       - uses: actions/upload-artifact@v4
         with:

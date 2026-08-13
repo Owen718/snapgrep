@@ -12,6 +12,14 @@ const executable = path.join(
   process.platform === "win32" ? "napi.cmd" : "napi",
 );
 
+// Cross-compiling is how the Intel macOS addon gets built: GitHub's Intel
+// runners are being retired, so an Apple Silicon runner emits both.
+// An unset variable arrives as "" from CI matrices, which means "host build".
+const target = process.env.SNAPGREP_BUILD_TARGET || undefined;
+if (target !== undefined && !/^[A-Za-z0-9_.-]+$/u.test(target)) {
+  throw new Error(`SNAPGREP_BUILD_TARGET is not a valid Rust target triple: ${target}`);
+}
+
 mkdirSync(outputDirectory, { recursive: true });
 const result = spawnSync(
   executable,
@@ -27,6 +35,7 @@ const result = spawnSync(
     "--output-dir",
     "binding",
     "--platform",
+    ...(target === undefined ? [] : ["--target", target]),
     "--js",
     "index.cjs",
     "--dts",
