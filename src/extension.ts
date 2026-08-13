@@ -7,6 +7,7 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
+import { resolvePackagedKernelAddonPath } from "./addon-path.js";
 import { normalizeInitialDirtyPaths } from "./dirty-tracker.js";
 import { FastGrepEngine } from "./engine.js";
 import { formatSearchResult } from "./format.js";
@@ -46,6 +47,8 @@ type ActiveEngine =
 const KERNEL_READ_ONLY_TOOLS = new Set(["grep", "read", "find", "ls"]);
 export const KERNEL_HOST_CONTRACT = "isolated-pi-v1" as const;
 
+export { resolvePackagedKernelAddonPath };
+
 export const FAST_GREP_PROMPT_SNIPPET =
   "Search large codebases quickly with regex and path/glob filters, indexed candidates, and exact verification";
 
@@ -71,29 +74,6 @@ function backendFlag(value: boolean | string | undefined): BackendFlag {
   );
 }
 
-export async function resolvePackagedKernelAddonPath(
-  moduleDirectory = import.meta.dirname,
-  platform: string = process.platform,
-  architecture: string = process.arch,
-): Promise<string> {
-  const filename = `pi-fast-grep-kernel.${platform}-${architecture}.node`;
-  const candidates = [
-    path.resolve(moduleDirectory, "../native", filename),
-    path.resolve(moduleDirectory, "../native/kernel/binding", filename),
-    path.resolve(moduleDirectory, "../../native/kernel/binding", filename),
-  ];
-  for (const addonPath of candidates) {
-    try {
-      const addonStat = await stat(addonPath);
-      if (addonStat.isFile()) return addonPath;
-    } catch {
-      // Try the source/npm package layout after the standalone artifact layout.
-    }
-  }
-  throw new Error(
-    `packaged kernel addon is missing for ${platform}-${architecture}; checked ${candidates.join(", ")}`,
-  );
-}
 
 export function parseKernelAddonPathFlag(
   value: boolean | string | undefined,

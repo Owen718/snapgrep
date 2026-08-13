@@ -140,14 +140,30 @@ The prebuilt binary targets macOS on Apple Silicon. On other platforms the exten
 
 ### With DeepSeek Harness (dsh)
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) ships a `grep` tool that spawns the packaged ripgrep binary through `ctx.subprocess.spawn()` on every call — a process launch plus a full scan, each time. This repository includes a Cordis plugin that answers the same tool from the index instead.
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) ships a `grep` tool that spawns the packaged ripgrep binary through `ctx.subprocess.spawn()` on every call — a process launch plus a full scan, each time. This repository includes a Cordis plugin that answers from the index instead.
 
-Clone somewhere stable, then add one row to your `agent.cordis.yml`, **after** the `tool-fs-search` row so the later registration wins:
+The harness manages plugins through pnpm:
 
-```yaml
-- id: snapgrep
-  name: '/absolute/path/to/snapgrep/artifacts/pi-extension/pi-fast-grep/src/dsh-plugin.js'
+```sh
+npm i -g pnpm
+git clone https://github.com/Owen718/snapgrep.git ~/snapgrep
+
+dsh plugin --profile headless add "file:$HOME/snapgrep/artifacts/pi-extension/pi-fast-grep"
 ```
+
+Then add it to the profile's bundle list in `~/.dsh/profiles/<profile>/package.json`:
+
+```json
+"dsh": { "profile": { "bundles": [
+  "@deepseek-ai/dsh-base",
+  "@deepseek-ai/dsh-headless",
+  "pi-fast-grep-extension"
+] } }
+```
+
+Verify with `dsh --profile headless --dump-config | grep snapgrep`.
+
+**Verified end to end**, not inferred from types: a real DeepSeek V4-Flash session calling both tools returns correct results, and the index file appears under `~/.cache/snapgrep/` — proof the query was served from the index rather than quietly falling back.
 
 Measured on the same 17.4 MB vite repository, against what the harness does today:
 
@@ -158,12 +174,11 @@ Measured on the same 17.4 MB vite repository, against what the harness does toda
 | normalizePath | 1.36 ms | 130.0 ms | **96×** |
 | ResolvedConfig | 1.89 ms | 128.3 ms | **68×** |
 
-`pattern`, `path`, and `include` all behave as the built-in tool does, verified match-for-match against ripgrep. `glob` is left to the built-in plugin.
+Three things this had to get right, each found by running it rather than reading about it:
 
-Two details worth knowing:
-
-- **The index lives in `~/.cache/snapgrep/`, never inside the repository.** An index written under the workspace would appear as an untracked file, and since the kernel only serves a clean Git snapshot, it would disable itself after the first query.
-- **Freshness is driven by `tools/pre-execute`.** The index is retired *before* a writing tool dispatches, never after, so a search cannot observe a workspace caught mid-write. The next search rebuilds — measured at about 60 ms — and read-only tools do not trigger a rebuild.
+- **The registry rejects a duplicate tool name outright** — there is no last-one-wins. The plugin's bundle patch disables the built-in `tool-fs-search` row and supplies both `grep` and `glob` in its place. `glob` runs the identical ripgrep invocation the built-in used: same flags, same modification-time ordering, same VCS exclusions.
+- **The index lives in `~/.cache/snapgrep/`, never inside the repository.** An index written under the workspace appears as an untracked file, and since the kernel only serves a clean Git snapshot, it would disable itself after one query.
+- **Freshness runs off `tools/pre-execute`,** which fires before a writing tool dispatches, so a search cannot observe a workspace caught mid-write. Rebuild costs about 60 ms; read-only tools do not trigger one.
 
 A workspace that is not a clean Git tree falls back to a full ripgrep run: correct, just not accelerated.
 

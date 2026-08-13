@@ -1,11 +1,12 @@
-import { stat } from "node:fs/promises";
 import path from "node:path";
 import { createGrepToolDefinition, defineTool, } from "@earendil-works/pi-coding-agent";
+import { resolvePackagedKernelAddonPath } from "./addon-path.js";
 import { normalizeInitialDirtyPaths } from "./dirty-tracker.js";
 import { FastGrepEngine } from "./engine.js";
 import { formatSearchResult } from "./format.js";
 const KERNEL_READ_ONLY_TOOLS = new Set(["grep", "read", "find", "ls"]);
 export const KERNEL_HOST_CONTRACT = "isolated-pi-v1";
+export { resolvePackagedKernelAddonPath };
 export const FAST_GREP_PROMPT_SNIPPET = "Search large codebases quickly with regex and path/glob filters, indexed candidates, and exact verification";
 export const FAST_GREP_PROMPT_GUIDELINES = [
     "Use grep for code search instead of running rg in bash; grep uses the index when safe and falls back automatically.",
@@ -23,25 +24,6 @@ function backendFlag(value) {
         return value;
     }
     throw new Error(`--fast-grep-backend must be auto, instant, normal, fff, kernel, or kernel-dev (received ${String(value)})`);
-}
-export async function resolvePackagedKernelAddonPath(moduleDirectory = import.meta.dirname, platform = process.platform, architecture = process.arch) {
-    const filename = `pi-fast-grep-kernel.${platform}-${architecture}.node`;
-    const candidates = [
-        path.resolve(moduleDirectory, "../native", filename),
-        path.resolve(moduleDirectory, "../native/kernel/binding", filename),
-        path.resolve(moduleDirectory, "../../native/kernel/binding", filename),
-    ];
-    for (const addonPath of candidates) {
-        try {
-            const addonStat = await stat(addonPath);
-            if (addonStat.isFile())
-                return addonPath;
-        }
-        catch {
-            // Try the source/npm package layout after the standalone artifact layout.
-        }
-    }
-    throw new Error(`packaged kernel addon is missing for ${platform}-${architecture}; checked ${candidates.join(", ")}`);
 }
 export function parseKernelAddonPathFlag(value) {
     if (typeof value !== "string" || value.length === 0) {

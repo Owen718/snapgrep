@@ -12,12 +12,18 @@
     "src/*.js",
     "native/*.node",
     ".gitignore",
+    "cordis.patch.yml",
     "安装说明.md"
   ],
   "pi": {
     "extensions": [
       "./src/packaged-extension.js"
     ]
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "engines": {
     "node": ">=22.19.0"

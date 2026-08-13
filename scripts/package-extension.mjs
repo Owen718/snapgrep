@@ -49,6 +49,10 @@ await cp(
   path.join(repoRoot, "packaging", "pi-extension", "artifact.gitignore"),
   path.join(outputDirectory, ".gitignore"),
 );
+await cp(
+  path.join(repoRoot, "packaging", "pi-extension", "cordis.patch.yml"),
+  path.join(outputDirectory, "cordis.patch.yml"),
+);
 
 const artifactPackage = {
   name: "pi-fast-grep-extension",
@@ -62,8 +66,12 @@ const artifactPackage = {
     // needs its own export path.
     "./dsh": "./src/dsh-plugin.js",
   },
-  files: ["src/*.js", "native/*.node", ".gitignore", "安装说明.md"],
+  files: ["src/*.js", "native/*.node", ".gitignore", "cordis.patch.yml", "安装说明.md"],
   pi: { extensions: ["./src/packaged-extension.js"] },
+  // Declaring a bundle patch is what makes `dsh plugin add` mount this as a
+  // profile layer; without it the harness installs the package and leaves it
+  // inert.
+  dsh: { bundle: { patch: "./cordis.patch.yml" } },
   engines: { node: packageSource.engines.node },
 };
 await writeFile(

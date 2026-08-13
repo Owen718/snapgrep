@@ -5,10 +5,12 @@
  * The harness ships `@deepseek-ai/dsh-tool-fs-search`, which spawns the
  * packaged ripgrep binary through `ctx.subprocess.spawn()` for every call. That
  * pays a process launch plus a full scan each time. This plugin registers a
- * tool under the same name so the kernel answers instead, and keeps the exact
- * output shape the harness expects: `{ matches: [{ path, lineNumber, line }] }`.
+ * tool that answers from the index instead, keeping the exact output shape the
+ * harness expects: `{ matches: [{ path, lineNumber, line }] }`.
  *
- * Load this after the built-in search suite so the later registration wins.
+ * The tool registry rejects a duplicate name outright, so the bundle patch
+ * disables the built-in row rather than shadowing it. That takes `glob` down
+ * with it, so this plugin supplies an equivalent one alongside `grep`.
  *
  * Correctness is unchanged: any query the index cannot serve exactly falls back
  * to a full ripgrep run inside the engine, so a match set is never approximated.
@@ -19,8 +21,9 @@ import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import path from "node:path";
 import { defineTool } from "@deepseek-ai/dsh-tools";
-import { resolvePackagedKernelAddonPath } from "./extension.js";
+import { resolvePackagedKernelAddonPath } from "./addon-path.js";
 import { KernelMutationFeed, OptInKernelEngine } from "./kernel-engine.js";
+import { runCommand } from "./process.js";
 import { runRipgrep } from "./rg.js";
 /** Cordis plugin name used by loader diagnostics. */
 export const name = "snapgrep";
@@ -48,6 +51,10 @@ const READ_ONLY_TOOLS = new Set([
 function mayMutate(toolName) {
     return !READ_ONLY_TOOLS.has(toolName);
 }
+/** Matches the built-in glob tool's inline cap. */
+const DEFAULT_MAX_PATHS = 100;
+/** Version-control metadata the built-in glob tool keeps out of results. */
+const VCS_EXCLUDES = [".git", ".svn", ".hg", ".bzr", ".jj", ".sl"];
 /**
  * Render matches the way the harness's own grep tool does: a found count, then
  * each file's path followed by one `Line N: <text>` row per match, in first-seen
@@ -159,15 +166,19 @@ class EngineCache {
     }
 }
 /**
- * Register the indexed `grep` tool.
+ * Register the indexed `grep` tool and its companion `glob`.
  *
  * @param ctx - plugin context; the registration is scoped to this plugin.
  * @param config - resolved plugin configuration.
  */
 export function apply(ctx, config = {}) {
     const maxMatches = config.maxMatches ?? DEFAULT_MAX_MATCHES;
+    const maxPaths = config.maxPaths ?? DEFAULT_MAX_PATHS;
     if (!Number.isInteger(maxMatches) || maxMatches <= 0) {
         throw new Error("snapgrep: maxMatches must be a positive integer");
+    }
+    if (!Number.isInteger(maxPaths) || maxPaths <= 0) {
+        throw new Error("snapgrep: maxPaths must be a positive integer");
     }
     const cache = new EngineCache(import.meta.dirname);
     const tool = defineTool({
@@ -239,7 +250,66 @@ export function apply(ctx, config = {}) {
             };
         },
     });
+    // Disabling the built-in search suite to claim `grep` takes `glob` with it,
+    // so supply an equivalent. File discovery has nothing to gain from the
+    // content index, so this runs the same ripgrep invocation the built-in used:
+    // same flags, same modification-time ordering, same VCS exclusions.
+    const globTool = defineTool({
+        name: "glob",
+        description: "Find files by path pattern. A pattern with no \"/\" matches basenames at "
+            + `any depth. Returns files only, in modification-time order, up to ${maxPaths} paths. `
+            + "Includes hidden and ignored files.",
+        parameters: {
+            pattern: {
+                type: "string",
+                required: true,
+                description: "Glob pattern to match against paths (e.g. \"*.ts\", \"src/**/*.tsx\").",
+            },
+            path: {
+                type: "string",
+                description: "Directory to search. Defaults to the session workspace.",
+            },
+        },
+        output: {
+            schema: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                    paths: { type: "array", required: true, items: { type: "string" } },
+                },
+            },
+            render: (_args, value) => [
+                {
+                    type: "text",
+                    text: value.paths.length === 0
+                        ? "No files matched."
+                        : [`Found ${value.paths.length} file${value.paths.length === 1 ? "" : "s"}:`, "", ...value.paths].join("\n"),
+                },
+            ],
+        },
+        async execute(args, exec) {
+            const workdir = exec.agent?.session?.header?.cwd ?? process.cwd();
+            const argv = [
+                "--files",
+                `--glob=${args.pattern}`,
+                "--sort=modified",
+                "--no-ignore",
+                "--hidden",
+                ...VCS_EXCLUDES.flatMap((name) => [`--glob=!**/${name}`, `--glob=!**/${name}/**`]),
+            ];
+            if (args.path !== undefined)
+                argv.push("--", args.path);
+            const result = await runCommand("rg", argv, {
+                cwd: workdir,
+                allowExitCodes: [0, 1],
+                ...(exec.signal === undefined ? {} : { signal: exec.signal }),
+            });
+            const paths = result.stdout.split("\n").filter((line) => line.length > 0);
+            return { paths: paths.slice(0, maxPaths) };
+        },
+    });
     ctx.tools.register(tool);
+    ctx.tools.register(globTool);
     // Retire the index before anything that can write runs, never after: a
     // post-execute hook is too late to order a concurrent search against a
     // mutator. This mirrors the contract the Pi extension operates under.
