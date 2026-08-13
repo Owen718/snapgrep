@@ -1,15 +1,17 @@
-# snapgrep
+<h1 align="center">snapgrep</h1>
 
-An in-process trigram index that makes code search in [Pi](https://github.com/earendil-works/pi) **20–70× faster than ripgrep** — with results that are byte-for-byte identical to ripgrep.
+<p align="center">
+  An in-process trigram index that makes code search in <a href="https://github.com/earendil-works/pi">Pi</a><br>
+  <b>20–70× faster than ripgrep</b> — with results that are byte-for-byte identical.
+</p>
 
-No sidecar process. No daemon. A single 3.2 MB native addon loaded inside the agent process.
+<p align="center">
+  <img src="assets/demo.svg" alt="Terminal demo: ripgrep takes 147.7 ms to search a 17 MB repository while snapgrep takes 2.1 ms, drawn to true scale" width="820">
+</p>
 
-```
-Search "createServer" across a 17 MB repository
-
-  ripgrep    ████████████████████████████████████████████  147.7 ms
-  snapgrep   █                                               2.1 ms   (72× faster)
-```
+<p align="center">
+  No sidecar process. No daemon. A single 3.2 MB native addon loaded inside the agent process.
+</p>
 
 ## Why this exists
 
