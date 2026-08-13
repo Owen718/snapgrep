@@ -101,6 +101,22 @@ The prebuilt binary targets macOS on Apple Silicon. On other platforms the exten
 
 中文安装说明见 [安装说明.md](artifacts/pi-extension/pi-fast-grep/安装说明.md)。
 
+### With oh-my-pi (omp)
+
+[oh-my-pi](https://github.com/can1357/oh-my-pi) ships a compatibility layer that treats `@earendil-works/pi-coding-agent` as an aliased scope, and its extension loader accepts both `.omp` and `.pi` directories. The same package works unmodified:
+
+```sh
+mkdir -p .pi/extensions
+cp -R artifacts/pi-extension/pi-fast-grep .pi/extensions/
+omp
+```
+
+Every API this extension depends on is present in omp's shim — `defineTool`, `createGrepToolDefinition`, `registerTool`, `registerFlag`, `getFlag`, and the `session_start` / `tool_execution_start` / `user_bash` / `tool_result` / `session_shutdown` events that drive index invalidation and recovery. This was verified against the published type definitions of `@oh-my-pi/pi-coding-agent`, not by running it — if something misbehaves, please open an issue.
+
+**omp already has a fast grep**, and it is fast for a different reason: it links ripgrep into its own process, which removes the fork-exec cost of shelling out. That is a real saving — a single ripgrep spawn costs roughly 6 ms — but the scan itself is unchanged. Linked in or not, ripgrep still reads every byte of every eligible file.
+
+snapgrep removes the scan instead. On the 17 MB corpus above, ripgrep takes 147.7 ms, of which about 6 ms is process startup. An in-process ripgrep lands somewhere near 141 ms; the index answers in 2.1 ms because it never opens the other 99% of the files. The two techniques compose rather than compete — candidate selection by index, exact verification in-process, which is what this project already does internally.
+
 ## Staying fresh
 
 An index is only useful if it reflects what you just edited.
