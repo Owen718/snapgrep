@@ -5,8 +5,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceDirectory = path.join(repoRoot, "dist", "src");
 const platformTarget = `${process.platform}-${process.arch}`;
-const addonName = `pi-fast-grep-kernel.${platformTarget}.node`;
-const addonSource = path.join(repoRoot, "native", "kernel", "binding", addonName);
+const bindingDirectory = path.join(repoRoot, "native", "kernel", "binding");
 const outputRoot = path.join(repoRoot, "artifacts", "pi-extension");
 const outputDirectory = path.join(outputRoot, "pi-fast-grep");
 const packageSource = JSON.parse(await readFile(path.join(repoRoot, "package.json"), "utf8"));
@@ -15,9 +14,14 @@ const sourceStat = await stat(sourceDirectory).catch(() => undefined);
 if (!sourceStat?.isDirectory()) {
   throw new Error("compiled extension is missing; run npm run build first");
 }
-const addonStat = await stat(addonSource).catch(() => undefined);
-if (!addonStat?.isFile()) {
-  throw new Error(`native addon is missing for ${platformTarget}; run npm run build:kernel first`);
+// Ship every addon present in the binding directory, not just this machine's.
+// CI builds each platform on its own runner and collects them here before
+// packaging, so the artifact serves every target it was built for.
+const addonNames = (await readdir(bindingDirectory).catch(() => []))
+  .filter((name) => name.startsWith("pi-fast-grep-kernel.") && name.endsWith(".node"))
+  .sort();
+if (addonNames.length === 0) {
+  throw new Error("no native addon was found; run npm run build:kernel first");
 }
 
 await rm(outputDirectory, { recursive: true, force: true });
@@ -29,7 +33,14 @@ for (const entry of await readdir(sourceDirectory, { withFileTypes: true })) {
     await cp(path.join(sourceDirectory, entry.name), path.join(outputDirectory, "src", entry.name));
   }
 }
-await cp(addonSource, path.join(outputDirectory, "native", addonName));
+for (const name of addonNames) {
+  await cp(path.join(bindingDirectory, name), path.join(outputDirectory, "native", name));
+}
+if (!addonNames.includes(`pi-fast-grep-kernel.${platformTarget}.node`)) {
+  process.stderr.write(
+    `note: packaged ${addonNames.length} addon(s), none of them for this machine (${platformTarget})\n`,
+  );
+}
 await cp(
   path.join(repoRoot, "packaging", "pi-extension", "INSTALL.zh-CN.md"),
   path.join(outputDirectory, "安装说明.md"),

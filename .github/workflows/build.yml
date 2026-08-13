@@ -1,0 +1,123 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  addon:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: darwin-arm64
+          - os: macos-13
+            target: darwin-x64
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: ubuntu-24.04-arm
+            target: linux-arm64
+          - os: windows-latest
+            target: win32-x64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native/kernel
+
+      # Only the napi CLI is needed to build the addon. Skipping production
+      # dependencies keeps this job independent of the agent packages.
+      - run: npm ci --omit=prod
+
+      # Keep the shipped binary free of the build machine's paths: panic
+      # metadata embeds source paths verbatim, and this artifact is published.
+      - name: Build native addon
+        shell: bash
+        run: npm run build:kernel
+        env:
+          RUSTFLAGS: --remap-path-prefix=${{ github.workspace }}=/src --remap-path-prefix=${{ runner.temp }}=/tmp
+
+      - name: Verify the addon loads
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls -la native/kernel/binding/
+          node -e "
+            const b = require('./native/kernel/binding/index.cjs');
+            if (typeof b.BINDING_ABI_VERSION !== 'number') {
+              throw new Error('addon loaded but ABI version is missing');
+            }
+            console.log('ABI', b.BINDING_ABI_VERSION, '|', b.bindingTarget());
+          "
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: addon-${{ matrix.target }}
+          path: native/kernel/binding/*.node
+          if-no-files-found: error
+          retention-days: 7
+
+  package:
+    name: package extension
+    needs: addon
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check
+
+      - run: npm run build
+
+      - name: Collect every platform's addon
+        uses: actions/download-artifact@v4
+        with:
+          pattern: addon-*
+          merge-multiple: true
+          path: native/kernel/binding
+
+      - name: Package the extension
+        run: |
+          set -euo pipefail
+          ls -la native/kernel/binding/
+          npm run package:extension
+          echo '--- packaged addons ---'
+          ls -la artifacts/pi-extension/pi-fast-grep/native/
+
+      - name: Fail if any target is missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          for target in darwin-arm64 darwin-x64 linux-x64 linux-arm64 win32-x64; do
+            file="artifacts/pi-extension/pi-fast-grep/native/pi-fast-grep-kernel.${target}.node"
+            test -f "$file" || { echo "missing addon for ${target}"; exit 1; }
+          done
+          echo "all five targets present"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pi-fast-grep-extension
+          path: artifacts/pi-extension/pi-fast-grep
+          if-no-files-found: error
