@@ -79,23 +79,36 @@ These are correctness boundaries, not missing features. Each one is a case where
 
 ## Install
 
-Copy the packaged extension into your project:
-
 ```sh
-mkdir -p .pi/extensions
-cp -R artifacts/pi-extension/pi-fast-grep .pi/extensions/
-pi --approve
-```
+git clone https://github.com/Owen718/snapgrep.git
+cd snapgrep
 
-Or install it globally:
-
-```sh
 mkdir -p ~/.pi/agent/extensions
 cp -R artifacts/pi-extension/pi-fast-grep ~/.pi/agent/extensions/
+
 pi
 ```
 
-Pi's built-in `grep` is replaced automatically. To confirm it is active, search for a string you know exists — the tool detail will show `actualBackend: kernel`.
+That is the whole install. Nothing is compiled, no daemon is started, and no shell profile is touched — the packaged extension already contains the compiled native addon.
+
+Pi's built-in `grep` is replaced automatically, in every project. To confirm it is active, ask Pi to search for a string you know exists: the tool detail will show `actualBackend: kernel`.
+
+<details>
+<summary>Install into a single project instead</summary>
+
+```sh
+git clone https://github.com/Owen718/snapgrep.git
+
+mkdir -p /path/to/your-project/.pi/extensions
+cp -R snapgrep/artifacts/pi-extension/pi-fast-grep /path/to/your-project/.pi/extensions/
+
+cd /path/to/your-project
+pi --approve
+```
+
+`--approve` is only needed the first time, to trust a project-level extension. The artifact carries a `.gitignore` scoped to its own directory, so installing it will not make your repository dirty.
+
+</details>
 
 The prebuilt binary targets macOS on Apple Silicon. On other platforms the extension reports exactly which native file is missing instead of failing silently; build from source with `npm run build:kernel && npm run package:extension`.
 
@@ -106,8 +119,12 @@ The prebuilt binary targets macOS on Apple Silicon. On other platforms the exten
 [oh-my-pi](https://github.com/can1357/oh-my-pi) ships a compatibility layer that treats `@earendil-works/pi-coding-agent` as an aliased scope, and its extension loader accepts both `.omp` and `.pi` directories. The same package works unmodified:
 
 ```sh
-mkdir -p .pi/extensions
-cp -R artifacts/pi-extension/pi-fast-grep .pi/extensions/
+git clone https://github.com/Owen718/snapgrep.git
+cd snapgrep
+
+mkdir -p ~/.pi/agent/extensions
+cp -R artifacts/pi-extension/pi-fast-grep ~/.pi/agent/extensions/
+
 omp
 ```
 
