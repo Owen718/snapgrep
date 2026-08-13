@@ -21,9 +21,16 @@ napi = { version = "=3.11.0", features = ["napi8"] }
 napi-derive = "=3.6.0"
 regex-syntax = "=0.8.8"
 rustix = { version = "=1.1.4", features = ["fs"] }
-sha2 = { version = "=0.10.9", features = ["asm"] }
+sha2 = "=0.10.9"
 tempfile = "=3.20.0"
 thiserror = "=2.0.16"
+
+# sha2's asm backend builds through sha2-asm, whose object files fail to link
+# under MSVC (LNK1181). Cargo unions features, so every other target keeps the
+# assembly implementation and only Windows falls back to portable Rust. The
+# digest runs once per index build, never on the query path.
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+sha2 = { version = "=0.10.9", features = ["asm"] }
 
 [dev-dependencies]
 filetime = "=0.2.26"
