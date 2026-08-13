@@ -1,0 +1,4 @@
+MULTI_BEGIN
+line alpha
+line beta
+MULTI_END

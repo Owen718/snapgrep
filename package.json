@@ -1,0 +1,53 @@
+{
+  "name": "snapgrep",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/packaged-extension.js",
+  "exports": {
+    ".": "./dist/src/packaged-extension.js"
+  },
+  "files": [
+    "dist/src/*.js",
+    "native/kernel/binding/*.node",
+    "README.md"
+  ],
+  "pi": {
+    "extensions": [
+      "./dist/src/packaged-extension.js"
+    ]
+  },
+  "description": "An in-process trigram index that makes code search in Pi 20-70x faster than ripgrep, with results identical to ripgrep.",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:kernel": "node scripts/build-kernel.mjs",
+    "package:extension": "node scripts/package-extension.mjs",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:kernel": "npm run build:kernel && PI_FAST_GREP_NATIVE_TEST=1 vitest run tests/kernel-binding-native.test.ts tests/kernel-engine-native.test.ts tests/extension-kernel-native.test.ts",
+    "test:watch": "vitest",
+    "fast-grep": "tsx src/cli.ts",
+    "benchmark": "node --max-old-space-size=2048 --import tsx benchmarks/run.ts",
+    "benchmark:generate-tail": "tsx scripts/generate-tail-corpus.ts",
+    "benchmark:generate-queries": "tsx benchmarks/generate-queries.ts",
+    "benchmark:prepare-typical": "tsx scripts/prepare-typical-corpus.ts"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "0.81.1",
+    "@earendil-works/pi-coding-agent": "0.81.1",
+    "@ff-labs/fff-node": "0.10.1"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "3.7.4",
+    "@types/node": "24.12.4",
+    "tsx": "4.23.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  },
+  "napi": {
+    "binaryName": "pi-fast-grep-kernel"
+  }
+}

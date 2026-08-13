@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "pi-fast-grep-k17-session-recovery-correctness/v1",
+  "passed": true,
+  "summary": {
+    "queries": 24,
+    "missing": 0,
+    "extra": 0,
+    "orderedEquivalent": 24,
+    "kernel": 20,
+    "fallback": 4
+  },
+  "queries": [
+    {
+      "corpus": "Tail",
+      "queryId": "literal.hot-cr",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "rg_fallback",
+        "fallbackReason": "kernel_binary_match",
+        "candidateFiles": null,
+        "verifiedFiles": null,
+        "totalMatches": 4000
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "escaped.call",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 1200,
+        "verifiedFiles": 1200,
+        "totalMatches": 1200
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "filter.hot-path",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 100,
+        "verifiedFiles": 100,
+        "totalMatches": 100
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "filter.yaml",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 800,
+        "verifiedFiles": 800,
+        "totalMatches": 800
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "filter.yaml-recursive",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 800,
+        "verifiedFiles": 800,
+        "totalMatches": 800
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "limit.hot-25",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "rg_fallback",
+        "fallbackReason": "kernel_binary_match",
+        "candidateFiles": null,
+        "verifiedFiles": null,
+        "totalMatches": 4000
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "case.hot-insensitive",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 500,
+        "verifiedFiles": 500,
+        "totalMatches": 500
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "no-match",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 0,
+        "verifiedFiles": 0,
+        "totalMatches": 0
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "literal.rare",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 1,
+        "verifiedFiles": 1,
+        "totalMatches": 1
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "literal.long-line",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 1,
+        "verifiedFiles": 1,
+        "totalMatches": 1
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "binary.after-nul",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "rg_fallback",
+        "fallbackReason": "kernel_binary_match",
+        "candidateFiles": null,
+        "verifiedFiles": null,
+        "totalMatches": 0
+      }
+    },
+    {
+      "corpus": "Tail",
+      "queryId": "literal.yaml",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "rg_fallback",
+        "fallbackReason": "kernel_binary_match",
+        "candidateFiles": null,
+        "verifiedFiles": null,
+        "totalMatches": 800
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "literal.define-config",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 186,
+        "verifiedFiles": 159,
+        "totalMatches": 403
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "literal.resolved-config",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 93,
+        "verifiedFiles": 54,
+        "totalMatches": 219
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "literal.normalize-path",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 56,
+        "verifiedFiles": 59,
+        "totalMatches": 187
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "literal.create-server",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 111,
+        "verifiedFiles": 79,
+        "totalMatches": 244
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "escaped.import-meta",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 538,
+        "verifiedFiles": 517,
+        "totalMatches": 1288
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "filter.ts-plugin",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 100,
+        "verifiedFiles": 99,
+        "totalMatches": 1068
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "filter.vite-source",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 44,
+        "verifiedFiles": 44,
+        "totalMatches": 160
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "filter.tests",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 0,
+        "verifiedFiles": 0,
+        "totalMatches": 0
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "limit.function-25",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 529,
+        "verifiedFiles": 511,
+        "totalMatches": 1990
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "case.define-config",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 309,
+        "verifiedFiles": 159,
+        "totalMatches": 403
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "no-match",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 0,
+        "verifiedFiles": 0,
+        "totalMatches": 0
+      }
+    },
+    {
+      "corpus": "Typical-vite",
+      "queryId": "literal.server",
+      "missing": 0,
+      "extra": 0,
+      "orderedEquivalent": true,
+      "route": {
+        "actualBackend": "kernel",
+        "fallbackReason": null,
+        "candidateFiles": 412,
+        "verifiedFiles": 279,
+        "totalMatches": 2188
+      }
+    }
+  ],
+  "resources": {
+    "wallMs": 8188.777125,
+    "peakTreeRssBytes": 244072448,
+    "treeRssLimitBytes": 3221225472,
+    "nodeOldSpaceMiB": 2048,
+    "perQueryTimeoutMs": 60000
+  }
+}

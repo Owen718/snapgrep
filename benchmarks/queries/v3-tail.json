@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "fast-grep-benchmark-queries/v2-safe",
+  "repo": "Tail",
+  "snapshot": "0fd49e9d21c144870e52d8fdc8a8194b4eb27ba4",
+  "language": "mixed synthetic",
+  "description": "Bounded benchmark-v3 corpus. Only rg and Instant are executed.",
+  "defaults": {
+    "hidden": false,
+    "context": 0,
+    "limit": 50
+  },
+  "summary": {
+    "queryCount": 12,
+    "performanceEligibleCount": 12,
+    "categoryCounts": {
+      "binary": 1,
+      "case_insensitive": 1,
+      "escaped_regex": 1,
+      "global_limit": 1,
+      "high_frequency_literal": 1,
+      "literal": 3,
+      "no_match": 1,
+      "path_glob_filter": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "literal.hot-cr",
+      "category": "high_frequency_literal",
+      "description": "Hot token in 4,000 files including three CRLF files.",
+      "request": {
+        "pattern": "TAIL_HOT_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "capacityPreflight": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "escaped.call",
+      "category": "escaped_regex",
+      "description": "Pure escaped-regex literal in 1,200 files.",
+      "request": {
+        "pattern": "TAIL_ESCAPED_TOKEN\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.hot-path",
+      "category": "path_glob_filter",
+      "description": "Hot token in one synthetic path partition.",
+      "request": {
+        "pattern": "TAIL_HOT_TOKEN",
+        "literal": true,
+        "path": "src/group-00",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.yaml",
+      "category": "path_glob_filter",
+      "description": "YAML token in 800 basename-glob files.",
+      "request": {
+        "pattern": "TAIL_YAML_TOKEN",
+        "literal": true,
+        "glob": "*.yaml",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.yaml-recursive",
+      "category": "path_glob_filter",
+      "description": "YAML token in a recursive path glob.",
+      "request": {
+        "pattern": "TAIL_YAML_TOKEN",
+        "literal": true,
+        "glob": "configs/**/*.yaml",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "limit.hot-25",
+      "category": "global_limit",
+      "description": "Hot CR-bearing token with presentation limit 25.",
+      "request": {
+        "pattern": "TAIL_HOT_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 25
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "case.hot-insensitive",
+      "category": "case_insensitive",
+      "description": "Case-folded token across 500 files.",
+      "request": {
+        "pattern": "tail_case_token",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "no-match",
+      "category": "no_match",
+      "description": "Bounded deterministic absent token.",
+      "request": {
+        "pattern": "FAST_GREP_SAFE_TAIL_ABSENT",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "no_matches"
+      }
+    },
+    {
+      "id": "literal.rare",
+      "category": "literal",
+      "description": "Single-file synthetic literal.",
+      "request": {
+        "pattern": "TAIL_RARE_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.long-line",
+      "category": "literal",
+      "description": "Token at the end of a 64 KiB line.",
+      "request": {
+        "pattern": "TAIL_LONG_LINE_TOKEN_0",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "binary.after-nul",
+      "category": "binary",
+      "description": "Token only after an early NUL must preserve rg binary behavior.",
+      "request": {
+        "pattern": "TAIL_HOT_TOKEN",
+        "literal": true,
+        "path": "assets",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.yaml",
+      "category": "literal",
+      "description": "Unfiltered YAML token.",
+      "request": {
+        "pattern": "TAIL_YAML_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1649 @@
+{
+  "schemaVersion": "fast-grep-benchmark-queries/v1",
+  "repo": "R3-kubernetes",
+  "snapshot": "862aaabb6e0b43535b7735e435febd1ec980b294",
+  "language": "Go / generated and staged monorepo",
+  "description": "Fixed, deterministic rg-parity and performance corpus. Requests use src/types.ts SearchRequest field names.",
+  "defaults": {
+    "hidden": false,
+    "context": 0,
+    "limit": 50
+  },
+  "verificationPolicy": {
+    "mode": "deferred_to_benchmark_runner",
+    "arguments": [
+      "--no-config",
+      "--count-matches",
+      "--color",
+      "never",
+      "--no-require-git"
+    ],
+    "excludedImplementationPaths": [
+      ".git/**",
+      ".pi/index/**",
+      ".fast-grep/**"
+    ],
+    "countsAreUnlimited": true,
+    "note": "Generation performs no repository content scans. The single benchmark runner owns exhaustive rg differential validation and fills observed counts in result artifacts."
+  },
+  "summary": {
+    "queryCount": 69,
+    "performanceEligibleCount": 25,
+    "routeCounts": {
+      "index_preferred": 54,
+      "fallback_required": 15
+    },
+    "categoryCounts": {
+      "anchor": 4,
+      "case_sensitivity": 4,
+      "context": 3,
+      "escaped_regex": 5,
+      "global_limit": 4,
+      "ignore": 2,
+      "invalid_regex": 2,
+      "literal": 18,
+      "multiline": 2,
+      "no_match": 3,
+      "path_glob_filter": 10,
+      "regex_fallback": 9,
+      "visibility": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "literal.shared-informer",
+      "category": "literal",
+      "description": "Shared informer factory constructor.",
+      "request": {
+        "pattern": "NewSharedInformerFactory",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.metav1",
+      "category": "literal",
+      "description": "Kubernetes metadata package alias.",
+      "request": {
+        "pattern": "metav1",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.pod-spec",
+      "category": "literal",
+      "description": "Pod specification type; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "PodSpec",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.kube-apiserver",
+      "category": "literal",
+      "description": "API server binary/configuration name; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "kube-apiserver",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.featuregate",
+      "category": "literal",
+      "description": "Feature gate package/identifier.",
+      "request": {
+        "pattern": "featuregate",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.client-go",
+      "category": "literal",
+      "description": "Kubernetes client library module name; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "client-go",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.shared-informer-type",
+      "category": "literal",
+      "description": "Shared informer factory type.",
+      "request": {
+        "pattern": "SharedInformerFactory",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.new-for-config",
+      "category": "literal",
+      "description": "Client constructor pattern.",
+      "request": {
+        "pattern": "NewForConfig",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.deep-copy-into",
+      "category": "literal",
+      "description": "Generated deep-copy method.",
+      "request": {
+        "pattern": "DeepCopyInto",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.scheme-builder",
+      "category": "literal",
+      "description": "API scheme registration helper.",
+      "request": {
+        "pattern": "SchemeBuilder",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.object-meta",
+      "category": "literal",
+      "description": "API object metadata type; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "ObjectMeta",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.resource-version",
+      "category": "literal",
+      "description": "Kubernetes resource version field; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "ResourceVersion",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.context-context",
+      "category": "literal",
+      "description": "Go context type.",
+      "request": {
+        "pattern": "context.Context",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.runtime-object",
+      "category": "literal",
+      "description": "Kubernetes runtime object interface.",
+      "request": {
+        "pattern": "runtime.Object",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.api-version",
+      "category": "literal",
+      "description": "Broad API version field; correctness-only because protobuf data requires late-binary reconciliation.",
+      "request": {
+        "pattern": "apiVersion",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.sets-new",
+      "category": "literal",
+      "description": "Generic set constructor.",
+      "request": {
+        "pattern": "sets.New",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.field-selector",
+      "category": "literal",
+      "description": "Field selector API identifier.",
+      "request": {
+        "pattern": "FieldSelector",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.func-test",
+      "category": "literal",
+      "description": "Broad Go test function prefix.",
+      "request": {
+        "pattern": "func Test",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.package",
+      "category": "anchor",
+      "description": "Go package declarations anchored at line start.",
+      "request": {
+        "pattern": "^package",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.import",
+      "category": "anchor",
+      "description": "Go imports anchored at line start.",
+      "request": {
+        "pattern": "^import",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.func",
+      "category": "anchor",
+      "description": "Go functions anchored at line start.",
+      "request": {
+        "pattern": "^func",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.type",
+      "category": "anchor",
+      "description": "Go type declarations anchored at line start.",
+      "request": {
+        "pattern": "^type",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.k8s-domain",
+      "category": "escaped_regex",
+      "description": "Literal dot in Kubernetes module paths; correctness-only because late-binary protobuf data requires tree-mode reconciliation.",
+      "request": {
+        "pattern": "k8s\\.io",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.context-type",
+      "category": "escaped_regex",
+      "description": "Literal dot in context.Context.",
+      "request": {
+        "pattern": "context\\.Context",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.object-meta-selector",
+      "category": "escaped_regex",
+      "description": "Literal dot in metav1.ObjectMeta.",
+      "request": {
+        "pattern": "metav1\\.ObjectMeta",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.sprintf-call",
+      "category": "escaped_regex",
+      "description": "Literal dot in fmt.Sprintf calls.",
+      "request": {
+        "pattern": "fmt\\.Sprintf",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.errors-new-call",
+      "category": "escaped_regex",
+      "description": "Literal dot and parenthesis in errors.New calls.",
+      "request": {
+        "pattern": "errors\\.New\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.alternation",
+      "category": "regex_fallback",
+      "description": "Alternation between client/informer constructors.",
+      "request": {
+        "pattern": "NewSharedInformerFactory|NewForConfig",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.character-class",
+      "category": "regex_fallback",
+      "description": "API Spec types via character classes.",
+      "request": {
+        "pattern": "[A-Z][A-Za-z]+Spec",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.quantifier",
+      "category": "regex_fallback",
+      "description": "Go constructors with bounded repetition.",
+      "request": {
+        "pattern": "New[A-Z][A-Za-z]{3,24}",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.capturing-group",
+      "category": "regex_fallback",
+      "description": "Capturing group over exported declarations.",
+      "request": {
+        "pattern": "(type|func) [A-Z][A-Za-z]+",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.word-boundary",
+      "category": "regex_fallback",
+      "description": "Rust-regex word-boundary semantics.",
+      "request": {
+        "pattern": "\\bResourceVersion\\b",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.named-group",
+      "category": "regex_fallback",
+      "description": "Rust-regex named capture group.",
+      "request": {
+        "pattern": "(?P<kind>[A-Z][A-Za-z]+Spec)",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.unicode-property",
+      "category": "regex_fallback",
+      "description": "Unicode uppercase-property class.",
+      "request": {
+        "pattern": "\\p{Lu}[A-Za-z]+Spec",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.extended-mode",
+      "category": "regex_fallback",
+      "description": "Rust extended/whitespace regex mode.",
+      "request": {
+        "pattern": "(?x) api Version",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.wildcard",
+      "category": "regex_fallback",
+      "description": "Wildcard over Kubernetes server names.",
+      "request": {
+        "pattern": "kube-.*server",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "dialect.lookbehind-rejected",
+      "category": "invalid_regex",
+      "description": "Default ripgrep deliberately rejects PCRE2 lookbehind because SearchRequest has no PCRE2 mode.",
+      "request": {
+        "pattern": "(?<=FAST_GREP_)PROBE",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "invalid_regex",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "dialect.backreference-rejected",
+      "category": "invalid_regex",
+      "description": "Default ripgrep deliberately rejects backreferences because SearchRequest has no PCRE2 mode.",
+      "request": {
+        "pattern": "(FAST_GREP)_\\1",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "invalid_regex",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.pkg-metav1",
+      "category": "path_glob_filter",
+      "description": "Metadata alias restricted to pkg/.",
+      "request": {
+        "pattern": "metav1",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "pkg"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.go-new-for-config",
+      "category": "path_glob_filter",
+      "description": "Client constructors in Go files.",
+      "request": {
+        "pattern": "NewForConfig",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "*.go"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.api-version",
+      "category": "path_glob_filter",
+      "description": "API version fields under api/.",
+      "request": {
+        "pattern": "apiVersion",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "api"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.yaml-kind",
+      "category": "path_glob_filter",
+      "description": "Kubernetes kinds in YAML files.",
+      "request": {
+        "pattern": "kind:",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "*.yaml"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.apis-deep-copy",
+      "category": "path_glob_filter",
+      "description": "Deep-copy methods under pkg/apis.",
+      "request": {
+        "pattern": "DeepCopyInto",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "pkg/apis"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.cluster-apiserver",
+      "category": "path_glob_filter",
+      "description": "API server references under cluster/.",
+      "request": {
+        "pattern": "kube-apiserver",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "cluster"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.staging-featuregate",
+      "category": "path_glob_filter",
+      "description": "Feature gate references under staging/.",
+      "request": {
+        "pattern": "featuregate",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "staging"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.go-tests",
+      "category": "path_glob_filter",
+      "description": "Go test functions only.",
+      "request": {
+        "pattern": "func Test",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "*_test.go"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.scheduler-context",
+      "category": "path_glob_filter",
+      "description": "Contexts in scheduler code.",
+      "request": {
+        "pattern": "context.Context",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "pkg/scheduler"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.recursive-api-go",
+      "category": "path_glob_filter",
+      "description": "Path-aware recursive API Go glob.",
+      "request": {
+        "pattern": "ObjectMeta",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "pkg/apis/**/*.go"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.1-sensitive",
+      "category": "case_sensitivity",
+      "description": "Case-sensitive lower-case probe for NewSharedInformerFactory.",
+      "request": {
+        "pattern": "newsharedinformerfactory",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.1-insensitive",
+      "category": "case_sensitivity",
+      "description": "Case-insensitive lower-case probe for NewSharedInformerFactory.",
+      "request": {
+        "pattern": "newsharedinformerfactory",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.2-sensitive",
+      "category": "case_sensitivity",
+      "description": "Case-sensitive lower-case probe for ResourceVersion.",
+      "request": {
+        "pattern": "resourceversion",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.2-insensitive",
+      "category": "case_sensitivity",
+      "description": "Case-insensitive lower-case probe for ResourceVersion.",
+      "request": {
+        "pattern": "resourceversion",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.1-lines",
+      "category": "context",
+      "description": "1 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "NewSharedInformerFactory",
+        "literal": true,
+        "path": "pkg/scheduler/eventhandlers_test.go",
+        "hidden": false,
+        "context": 1,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.2-lines",
+      "category": "context",
+      "description": "2 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "ResourceVersion",
+        "literal": true,
+        "path": "pkg/apis/core/types.go",
+        "hidden": false,
+        "context": 2,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.5-lines",
+      "category": "context",
+      "description": "5 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "kube-apiserver",
+        "literal": true,
+        "path": "cluster/gce/gci/configure-helper.sh",
+        "hidden": false,
+        "context": 5,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.1",
+      "category": "global_limit",
+      "description": "Broad Go function declaration prefix with a global presentation limit of 1.",
+      "request": {
+        "pattern": "func ",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 1
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.5",
+      "category": "global_limit",
+      "description": "Broad Go function declaration prefix with a global presentation limit of 5.",
+      "request": {
+        "pattern": "func ",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 5
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.25",
+      "category": "global_limit",
+      "description": "Broad Go function declaration prefix with a global presentation limit of 25.",
+      "request": {
+        "pattern": "func ",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 25
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.100",
+      "category": "global_limit",
+      "description": "Broad Go function declaration prefix with a global presentation limit of 100.",
+      "request": {
+        "pattern": "func ",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 100
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.1",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R3_kubernetes_1_9F3C2A7D",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.2",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R3_kubernetes_2_9F3C2A7D",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.3",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R3_kubernetes_3_9F3C2A7D",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "multiline.readme-heading",
+      "category": "multiline",
+      "description": "Exact first README heading and badge line.",
+      "request": {
+        "pattern": "# Kubernetes (K8s)\n\n[![CII Best Practices]",
+        "literal": true,
+        "path": "README.md",
+        "multiline": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 10
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "multiline.readme-prose",
+      "category": "multiline",
+      "description": "Dot-all span across the README header.",
+      "request": {
+        "pattern": "(?s)# Kubernetes \\(K8s\\).*logo/logo\\.png",
+        "literal": false,
+        "path": "README.md",
+        "multiline": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 10
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-default",
+      "category": "visibility",
+      "description": "Token unique to the hidden root .generated_files file; an explicit dotfile glob opts the matching hidden path into ripgrep traversal.",
+      "request": {
+        "pattern": "paths-from-repo",
+        "literal": true,
+        "glob": ".*",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-enabled",
+      "category": "visibility",
+      "description": "Token unique to the hidden root .generated_files file; hidden paths included.",
+      "request": {
+        "pattern": "paths-from-repo",
+        "literal": true,
+        "hidden": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-glob",
+      "category": "visibility",
+      "description": "A dotfile-only glob with hidden traversal enabled.",
+      "request": {
+        "pattern": "paths-from-repo",
+        "literal": true,
+        "glob": ".*",
+        "hidden": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "ignore.no-ignore-absent",
+      "category": "ignore",
+      "description": "noIgnore=true on an absent token exercises the conservative fallback without scanning mutable index state.",
+      "request": {
+        "pattern": "FAST_GREP_NO_IGNORE_ABSENT_R3-kubernetes",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "noIgnore": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "ignore.hidden-no-ignore-absent",
+      "category": "ignore",
+      "description": "hidden+noIgnore still excludes benchmark-owned .git/.pi index artifacts and returns a stable empty result.",
+      "request": {
+        "pattern": "FAST_GREP_HIDDEN_NO_IGNORE_ABSENT_R3-kubernetes",
+        "literal": true,
+        "path": "README.md",
+        "hidden": true,
+        "noIgnore": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    }
+  ]
+}

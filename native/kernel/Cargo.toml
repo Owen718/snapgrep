@@ -1,0 +1,39 @@
+[package]
+name = "pi-fast-grep-kernel"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+blake3 = "=1.8.2"
+grep-matcher = "=0.1.8"
+grep-regex = "=0.1.14"
+grep-searcher = "=0.1.16"
+libc = "=0.2.189"
+lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
+memchr = "=2.7.5"
+memmap2 = "=0.9.8"
+napi = { version = "=3.11.0", features = ["napi8"] }
+napi-derive = "=3.6.0"
+regex-syntax = "=0.8.8"
+rustix = { version = "=1.1.4", features = ["fs"] }
+sha2 = { version = "=0.10.9", features = ["asm"] }
+tempfile = "=3.20.0"
+thiserror = "=2.0.16"
+
+[dev-dependencies]
+filetime = "=0.2.26"
+
+[build-dependencies]
+napi-build = "=2.3.2"
+
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"

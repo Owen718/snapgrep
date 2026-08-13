@@ -1,0 +1,1650 @@
+{
+  "schemaVersion": "fast-grep-benchmark-queries/v1",
+  "repo": "R1-linux",
+  "snapshot": "248951ddc14de84de3910f9b13f51491a8cd91df",
+  "language": "C / kernel tree",
+  "description": "Fixed, deterministic rg-parity and performance corpus. Requests use src/types.ts SearchRequest field names.",
+  "defaults": {
+    "hidden": false,
+    "context": 0,
+    "limit": 50
+  },
+  "verificationPolicy": {
+    "mode": "deferred_to_benchmark_runner",
+    "arguments": [
+      "--no-config",
+      "--count-matches",
+      "--color",
+      "never",
+      "--no-require-git"
+    ],
+    "excludedImplementationPaths": [
+      ".git/**",
+      ".pi/index/**",
+      ".fast-grep/**"
+    ],
+    "countsAreUnlimited": true,
+    "note": "Generation performs no repository content scans. The single benchmark runner owns exhaustive rg differential validation and fills observed counts in result artifacts."
+  },
+  "summary": {
+    "queryCount": 69,
+    "performanceEligibleCount": 25,
+    "routeCounts": {
+      "index_preferred": 54,
+      "fallback_required": 15
+    },
+    "categoryCounts": {
+      "anchor": 4,
+      "case_sensitivity": 4,
+      "context": 3,
+      "escaped_regex": 5,
+      "global_limit": 4,
+      "ignore": 2,
+      "invalid_regex": 2,
+      "literal": 18,
+      "multiline": 2,
+      "no_match": 3,
+      "path_glob_filter": 10,
+      "regex_fallback": 9,
+      "visibility": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "literal.do-sys-openat2",
+      "category": "literal",
+      "description": "Openat2 syscall implementation symbol.",
+      "request": {
+        "pattern": "do_sys_openat2",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.sched-ext",
+      "category": "literal",
+      "description": "Scheduling-class identifier used by sched_ext.",
+      "request": {
+        "pattern": "sched_ext",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.export-symbol-gpl",
+      "category": "literal",
+      "description": "GPL export macro with medium-to-high frequency.",
+      "request": {
+        "pattern": "EXPORT_SYMBOL_GPL",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.config-preempt-rt",
+      "category": "literal",
+      "description": "Real-time preemption configuration symbol.",
+      "request": {
+        "pattern": "CONFIG_PREEMPT_RT",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.file-operations",
+      "category": "literal",
+      "description": "Canonical VFS operations type.",
+      "request": {
+        "pattern": "struct file_operations",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.copy-from-user",
+      "category": "literal",
+      "description": "Userspace copy helper.",
+      "request": {
+        "pattern": "copy_from_user",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.synchronize-rcu",
+      "category": "literal",
+      "description": "RCU synchronization primitive.",
+      "request": {
+        "pattern": "synchronize_rcu",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.blk-mq-map-queues",
+      "category": "literal",
+      "description": "Block multi-queue mapping symbol.",
+      "request": {
+        "pattern": "blk_mq_map_queues",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.io-uring-cmd-done",
+      "category": "literal",
+      "description": "io_uring command completion helper.",
+      "request": {
+        "pattern": "io_uring_cmd_done",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.mmap-lock-contended",
+      "category": "literal",
+      "description": "Rare mmap locking helper.",
+      "request": {
+        "pattern": "mmap_lock_is_contended",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.tcp-v4-connect",
+      "category": "literal",
+      "description": "IPv4 TCP connect implementation.",
+      "request": {
+        "pattern": "tcp_v4_connect",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.vfs-cap-revision",
+      "category": "literal",
+      "description": "Rare capabilities mask constant.",
+      "request": {
+        "pattern": "VFS_CAP_REVISION_MASK",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.module-device-table",
+      "category": "literal",
+      "description": "Driver module table macro.",
+      "request": {
+        "pattern": "MODULE_DEVICE_TABLE",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.trace-printk",
+      "category": "literal",
+      "description": "Kernel trace-print helper.",
+      "request": {
+        "pattern": "trace_printk",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.list-for-each-entry",
+      "category": "literal",
+      "description": "Very common linked-list iterator.",
+      "request": {
+        "pattern": "list_for_each_entry",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.spin-lock-irqsave",
+      "category": "literal",
+      "description": "Common IRQ-safe spinlock primitive.",
+      "request": {
+        "pattern": "spin_lock_irqsave",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.warn-on-once",
+      "category": "literal",
+      "description": "Common one-shot assertion macro.",
+      "request": {
+        "pattern": "WARN_ON_ONCE",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "literal.kmalloc",
+      "category": "literal",
+      "description": "Broad kernel allocator identifier.",
+      "request": {
+        "pattern": "kmalloc",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.include",
+      "category": "anchor",
+      "description": "Preprocessor includes anchored at line start.",
+      "request": {
+        "pattern": "^#include",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.static",
+      "category": "anchor",
+      "description": "File-scope static declarations anchored at line start.",
+      "request": {
+        "pattern": "^static",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.struct",
+      "category": "anchor",
+      "description": "Struct declarations beginning a line.",
+      "request": {
+        "pattern": "^struct",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "anchor.define",
+      "category": "anchor",
+      "description": "Preprocessor definitions anchored at line start.",
+      "request": {
+        "pattern": "^#define",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.module-license-call",
+      "category": "escaped_regex",
+      "description": "Literal opening parenthesis in MODULE_LICENSE calls.",
+      "request": {
+        "pattern": "MODULE_LICENSE\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.export-gpl-call",
+      "category": "escaped_regex",
+      "description": "Literal opening parenthesis in GPL exports.",
+      "request": {
+        "pattern": "EXPORT_SYMBOL_GPL\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.warn-on-call",
+      "category": "escaped_regex",
+      "description": "Literal opening parenthesis in WARN_ON calls.",
+      "request": {
+        "pattern": "WARN_ON\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.is-enabled-call",
+      "category": "escaped_regex",
+      "description": "Literal opening parenthesis in configuration checks.",
+      "request": {
+        "pattern": "IS_ENABLED\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "escaped.module-init-call",
+      "category": "escaped_regex",
+      "description": "Literal opening parenthesis in module initializers.",
+      "request": {
+        "pattern": "module_init\\(",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.alternation",
+      "category": "regex_fallback",
+      "description": "Alternation plus an optional noncapturing group.",
+      "request": {
+        "pattern": "EXPORT_SYMBOL(?:_GPL)?|MODULE_LICENSE",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.character-class",
+      "category": "regex_fallback",
+      "description": "Uppercase configuration identifiers via character classes.",
+      "request": {
+        "pattern": "CONFIG_[A-Z][A-Z0-9_]+",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.quantifier",
+      "category": "regex_fallback",
+      "description": "Grouped alternatives and bounded repetition.",
+      "request": {
+        "pattern": "(?:spin|read|write)_[a-z_]{4,20}",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.capturing-group",
+      "category": "regex_fallback",
+      "description": "Capturing group over C type declarations.",
+      "request": {
+        "pattern": "(struct|enum) [a-z_]+",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.word-boundary",
+      "category": "regex_fallback",
+      "description": "Rust-regex word-boundary semantics.",
+      "request": {
+        "pattern": "\\bdo_sys_openat2\\b",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.named-group",
+      "category": "regex_fallback",
+      "description": "Rust-regex named capture group.",
+      "request": {
+        "pattern": "(?P<export>EXPORT_SYMBOL(?:_GPL)?)",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.unicode-property",
+      "category": "regex_fallback",
+      "description": "Unicode uppercase-property class.",
+      "request": {
+        "pattern": "\\p{Lu}{4,}_GPL",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.extended-mode",
+      "category": "regex_fallback",
+      "description": "Rust extended/whitespace regex mode.",
+      "request": {
+        "pattern": "(?x) CONFIG_ [A-Z0-9_]+",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "regex.wildcard",
+      "category": "regex_fallback",
+      "description": "Wildcard matching around a rare syscall symbol.",
+      "request": {
+        "pattern": "do_sys_.*at2",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "dialect.lookbehind-rejected",
+      "category": "invalid_regex",
+      "description": "Default ripgrep deliberately rejects PCRE2 lookbehind because SearchRequest has no PCRE2 mode.",
+      "request": {
+        "pattern": "(?<=FAST_GREP_)PROBE",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "invalid_regex",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "dialect.backreference-rejected",
+      "category": "invalid_regex",
+      "description": "Default ripgrep deliberately rejects backreferences because SearchRequest has no PCRE2 mode.",
+      "request": {
+        "pattern": "(FAST_GREP)_\\1",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "invalid_regex",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.fs-export",
+      "category": "path_glob_filter",
+      "description": "GPL exports restricted to fs/.",
+      "request": {
+        "pattern": "EXPORT_SYMBOL_GPL",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "fs"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.drivers-fops",
+      "category": "path_glob_filter",
+      "description": "File operations restricted to drivers/.",
+      "request": {
+        "pattern": "struct file_operations",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "drivers"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.c-module-license",
+      "category": "path_glob_filter",
+      "description": "Module licenses in C files.",
+      "request": {
+        "pattern": "MODULE_LICENSE",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "*.c"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.include-defines",
+      "category": "path_glob_filter",
+      "description": "Definitions under public/internal include headers.",
+      "request": {
+        "pattern": "#define",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "include",
+        "glob": "*.h"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.x86-config",
+      "category": "path_glob_filter",
+      "description": "Configuration references in arch/x86.",
+      "request": {
+        "pattern": "CONFIG_",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "arch/x86"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.rust-static",
+      "category": "path_glob_filter",
+      "description": "Static declarations in Rust sources only.",
+      "request": {
+        "pattern": "static",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "*.rs"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.docs-kernel",
+      "category": "path_glob_filter",
+      "description": "Kernel prose restricted to Documentation/.",
+      "request": {
+        "pattern": "kernel",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "Documentation"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.net-tcp",
+      "category": "path_glob_filter",
+      "description": "IPv4 TCP symbol restricted to net/.",
+      "request": {
+        "pattern": "tcp_v4_connect",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "net"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.mm-rcu",
+      "category": "path_glob_filter",
+      "description": "RCU synchronization restricted to mm/.",
+      "request": {
+        "pattern": "synchronize_rcu",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "path": "mm"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "filter.nested-header-glob",
+      "category": "path_glob_filter",
+      "description": "Path-aware recursive include header glob.",
+      "request": {
+        "pattern": "file_operations",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50,
+        "glob": "include/**/*.h"
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.1-sensitive",
+      "category": "case_sensitivity",
+      "description": "Case-sensitive lower-case probe for CONFIG_PREEMPT_RT.",
+      "request": {
+        "pattern": "config_preempt_rt",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.1-insensitive",
+      "category": "case_sensitivity",
+      "description": "Case-insensitive lower-case probe for CONFIG_PREEMPT_RT.",
+      "request": {
+        "pattern": "config_preempt_rt",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.2-sensitive",
+      "category": "case_sensitivity",
+      "description": "Case-sensitive lower-case probe for EXPORT_SYMBOL_GPL.",
+      "request": {
+        "pattern": "export_symbol_gpl",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "case.2-insensitive",
+      "category": "case_sensitivity",
+      "description": "Case-insensitive lower-case probe for EXPORT_SYMBOL_GPL.",
+      "request": {
+        "pattern": "export_symbol_gpl",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.1-lines",
+      "category": "context",
+      "description": "1 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "do_sys_openat2",
+        "literal": true,
+        "path": "fs/open.c",
+        "hidden": false,
+        "context": 1,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.2-lines",
+      "category": "context",
+      "description": "2 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "tcp_v4_connect",
+        "literal": true,
+        "path": "net/ipv4/tcp_ipv4.c",
+        "hidden": false,
+        "context": 2,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "context.5-lines",
+      "category": "context",
+      "description": "5 line(s) of context around a known symbol.",
+      "request": {
+        "pattern": "VFS_CAP_REVISION_MASK",
+        "literal": true,
+        "path": "include/uapi/linux/capability.h",
+        "hidden": false,
+        "context": 5,
+        "limit": 20
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.1",
+      "category": "global_limit",
+      "description": "Broad VFS-related type prefix with a global presentation limit of 1.",
+      "request": {
+        "pattern": "struct file",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 1
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.5",
+      "category": "global_limit",
+      "description": "Broad VFS-related type prefix with a global presentation limit of 5.",
+      "request": {
+        "pattern": "struct file",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 5
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.25",
+      "category": "global_limit",
+      "description": "Broad VFS-related type prefix with a global presentation limit of 25.",
+      "request": {
+        "pattern": "struct file",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 25
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "limit.100",
+      "category": "global_limit",
+      "description": "Broad VFS-related type prefix with a global presentation limit of 100.",
+      "request": {
+        "pattern": "struct file",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 100
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.1",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R1_linux_1_9F3C2A7D",
+        "literal": true,
+        "path": "README",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.2",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R1_linux_2_9F3C2A7D",
+        "literal": true,
+        "path": "README",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "no-match.3",
+      "category": "no_match",
+      "description": "Deterministic absent token verifies the empty-result path in the bounded root README.",
+      "request": {
+        "pattern": "FAST_GREP_DETERMINISTIC_ABSENT_R1_linux_3_9F3C2A7D",
+        "literal": true,
+        "path": "README",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "multiline.readme-heading",
+      "category": "multiline",
+      "description": "Exact two-line README heading.",
+      "request": {
+        "pattern": "Linux kernel\n============",
+        "literal": true,
+        "path": "README",
+        "multiline": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 10
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "multiline.readme-prose",
+      "category": "multiline",
+      "description": "Dot-all span inside the root README.",
+      "request": {
+        "pattern": "(?s)Linux kernel.*Quick Start",
+        "literal": false,
+        "path": "README",
+        "multiline": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 10
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-default",
+      "category": "visibility",
+      "description": "Token from the hidden root .pylintrc; an explicit dotfile glob opts the matching hidden path into ripgrep traversal.",
+      "request": {
+        "pattern": "tools/lib/python",
+        "literal": true,
+        "glob": ".*",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-enabled",
+      "category": "visibility",
+      "description": "Token from the hidden root .pylintrc; hidden paths included.",
+      "request": {
+        "pattern": "tools/lib/python",
+        "literal": true,
+        "hidden": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "visibility.hidden-glob",
+      "category": "visibility",
+      "description": "A dotfile-only glob with hidden traversal enabled.",
+      "request": {
+        "pattern": "tools/lib/python",
+        "literal": true,
+        "glob": ".*",
+        "hidden": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "ignore.no-ignore-absent",
+      "category": "ignore",
+      "description": "noIgnore=true on an absent token exercises the conservative fallback without scanning mutable index state.",
+      "request": {
+        "pattern": "FAST_GREP_NO_IGNORE_ABSENT_R1-linux",
+        "literal": true,
+        "path": "README",
+        "hidden": false,
+        "noIgnore": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    },
+    {
+      "id": "ignore.hidden-no-ignore-absent",
+      "category": "ignore",
+      "description": "hidden+noIgnore still excludes benchmark-owned .git/.pi index artifacts and returns a stable empty result.",
+      "request": {
+        "pattern": "FAST_GREP_HIDDEN_NO_IGNORE_ABSENT_R1-linux",
+        "literal": true,
+        "path": "README",
+        "hidden": true,
+        "noIgnore": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": false,
+      "expected": {
+        "outcome": "no_matches",
+        "verification": {
+          "status": "deferred_to_benchmark_runner",
+          "exitCode": null,
+          "matchedFileCount": null,
+          "matchCount": null
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "pi-fast-grep-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/packaged-extension.js",
+  "exports": {
+    ".": "./src/packaged-extension.js"
+  },
+  "files": [
+    "src/*.js",
+    "native/*.node",
+    ".gitignore",
+    "安装说明.md"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/packaged-extension.js"
+    ]
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

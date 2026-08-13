@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "fast-grep-benchmark-queries/v2-safe",
+  "repo": "Core",
+  "snapshot": "deterministic-core-fixture-v1",
+  "language": "mixed fixture",
+  "description": "Bounded benchmark-v3 corpus. Only rg and Instant are executed.",
+  "defaults": {
+    "hidden": false,
+    "context": 0,
+    "limit": 50
+  },
+  "summary": {
+    "queryCount": 12,
+    "performanceEligibleCount": 12,
+    "categoryCounts": {
+      "case_insensitive": 1,
+      "context": 1,
+      "escaped_regex": 1,
+      "global_limit": 1,
+      "high_frequency_literal": 1,
+      "ignore": 1,
+      "literal": 1,
+      "multiline": 1,
+      "no_match": 1,
+      "path_glob_filter": 2,
+      "visibility": 1
+    }
+  },
+  "queries": [
+    {
+      "id": "literal.rare",
+      "category": "literal",
+      "description": "Rare visible literal.",
+      "request": {
+        "pattern": "FG_RARE_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.many",
+      "category": "high_frequency_literal",
+      "description": "Highest-cardinality Core token.",
+      "request": {
+        "pattern": "FG_MANY_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "capacityPreflight": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "escaped.whitespace",
+      "category": "escaped_regex",
+      "description": "Escaped whitespace regex.",
+      "request": {
+        "pattern": "FG_EXTENDED\\s+TOKEN",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.path",
+      "category": "path_glob_filter",
+      "description": "Literal restricted to a subtree.",
+      "request": {
+        "pattern": "FG_PATH_TOKEN",
+        "literal": true,
+        "path": "src/sub",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.glob",
+      "category": "path_glob_filter",
+      "description": "Literal restricted by basename glob.",
+      "request": {
+        "pattern": "FG_GLOB_TOKEN",
+        "literal": true,
+        "glob": "*.ts",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "limit.2",
+      "category": "global_limit",
+      "description": "Global presentation limit over four occurrences.",
+      "request": {
+        "pattern": "FG_MANY_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 2
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "case.insensitive",
+      "category": "case_insensitive",
+      "description": "Explicit ASCII case folding.",
+      "request": {
+        "pattern": "mixed_value",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "no-match",
+      "category": "no_match",
+      "description": "Bounded deterministic absent token.",
+      "request": {
+        "pattern": "FAST_GREP_SAFE_CORE_ABSENT",
+        "literal": true,
+        "path": "src/main.ts",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "no_matches"
+      }
+    },
+    {
+      "id": "context.lines",
+      "category": "context",
+      "description": "Context around fixture boundary matches.",
+      "request": {
+        "pattern": "CTX_TARGET",
+        "literal": true,
+        "path": "context.txt",
+        "hidden": false,
+        "context": 2,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "multiline.exact",
+      "category": "multiline",
+      "description": "Exact four-line literal.",
+      "request": {
+        "pattern": "MULTI_BEGIN\nline alpha\nline beta\nMULTI_END",
+        "literal": true,
+        "path": "multiline.txt",
+        "multiline": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "visibility.hidden",
+      "category": "visibility",
+      "description": "Hidden path traversal.",
+      "request": {
+        "pattern": "FG_HIDDEN_TOKEN",
+        "literal": true,
+        "hidden": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "ignore.disabled",
+      "category": "ignore",
+      "description": "Ignored path through noIgnore fallback.",
+      "request": {
+        "pattern": "FG_IGNORED_TOKEN",
+        "literal": true,
+        "hidden": false,
+        "noIgnore": true,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "fallback_required",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    }
+  ]
+}

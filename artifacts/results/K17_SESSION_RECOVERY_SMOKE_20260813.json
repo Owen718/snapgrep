@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "pi-fast-grep-session-recovery-smoke/v1",
+  "passed": true,
+  "fixtureFiles": 300,
+  "installedExtension": ".bench/k17-extension-smoke/repo/.pi/extensions/pi-fast-grep",
+  "grepSource": ".bench/k17-extension-smoke/repo/.pi/extensions/pi-fast-grep/src/packaged-extension.js",
+  "timingsMs": {
+    "install": 16.36541699999998,
+    "loaderProbe": 986.2633329999999,
+    "piStartAndIndex": 411.23241599999983,
+    "firstSearch": 558.1297500000001,
+    "processStartToFirstResult": 2748.974416,
+    "firstEditToKernelResult": 45.92170900000019,
+    "secondEditToKernelResult": 61.63645799999995,
+    "bashToKernelResult": 41.14883299999974,
+    "total": 2920.971291
+  },
+  "firstSearch": {
+    "actualBackend": "kernel",
+    "totalMatches": 1
+  },
+  "afterFirstEdit": {
+    "actualBackend": "kernel",
+    "totalMatches": 2
+  },
+  "afterSecondEdit": {
+    "actualBackend": "kernel",
+    "totalMatches": 3
+  },
+  "afterBash": {
+    "actualBackend": "kernel",
+    "totalMatches": 4
+  },
+  "resources": {
+    "peakTreeRssBytes": 392822784,
+    "treeRssLimitBytes": 3221225472,
+    "nodeOldSpaceMiB": 2048
+  }
+}

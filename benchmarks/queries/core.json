@@ -1,0 +1,334 @@
+{
+  "schemaVersion": "fast-grep-contract-queries/v1",
+  "fixtureRoot": "../fixtures/core",
+  "description": "Deterministic contract queries for rg and fast_grep parity. Paths are relative to fixtureRoot.",
+  "defaults": {
+    "path": ".",
+    "glob": null,
+    "caseInsensitive": false,
+    "multiline": false,
+    "hidden": false,
+    "noIgnore": false,
+    "beforeContext": 0,
+    "afterContext": 0,
+    "maxResults": null
+  },
+  "queries": [
+    {
+      "id": "literal.rare-default",
+      "purpose": "A rare literal is returned from an ordinary visible file.",
+      "args": { "pattern": "FG_RARE_TOKEN" },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 1, "endLine": 1 }
+        ]
+      }
+    },
+    {
+      "id": "filter.path-subtree",
+      "purpose": "A path restriction is rooted at the fixture and cannot leak sibling matches.",
+      "args": { "pattern": "FG_PATH_TOKEN", "path": "src/sub" },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/sub/nested.ts", "startLine": 1, "endLine": 1 }
+        ]
+      }
+    },
+    {
+      "id": "filter.glob-basename",
+      "purpose": "A basename glob applies at every depth and excludes a different extension.",
+      "args": { "pattern": "FG_GLOB_TOKEN", "glob": "*.ts" },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 4, "endLine": 4 },
+          { "path": "src/sub/deep/deeper.ts", "startLine": 1, "endLine": 1 },
+          { "path": "src/sub/nested.ts", "startLine": 2, "endLine": 2 }
+        ]
+      }
+    },
+    {
+      "id": "filter.glob-path",
+      "purpose": "A slash-containing glob is matched against a fixture-relative path.",
+      "args": { "pattern": "FG_GLOB_TOKEN", "glob": "src/sub/**/*.ts" },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/sub/deep/deeper.ts", "startLine": 1, "endLine": 1 },
+          { "path": "src/sub/nested.ts", "startLine": 2, "endLine": 2 }
+        ]
+      }
+    },
+    {
+      "id": "case.sensitive-default",
+      "purpose": "Default matching is case-sensitive rather than smart-case.",
+      "args": { "pattern": "mixed_value" },
+      "expectedRoute": "index_preferred",
+      "expected": { "outcome": "no_matches", "locations": [] }
+    },
+    {
+      "id": "case.insensitive-explicit",
+      "purpose": "Explicit case-insensitive matching finds an ASCII mixed-case token.",
+      "args": { "pattern": "mixed_value", "caseInsensitive": true },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 2, "endLine": 2 }
+        ]
+      }
+    },
+    {
+      "id": "visibility.hidden-default",
+      "purpose": "Hidden paths are absent under rg-compatible defaults.",
+      "args": { "pattern": "FG_HIDDEN_TOKEN" },
+      "expectedRoute": "index_preferred",
+      "expected": { "outcome": "no_matches", "locations": [] }
+    },
+    {
+      "id": "visibility.hidden-enabled",
+      "purpose": "hidden=true includes hidden paths while still respecting ignore files.",
+      "args": { "pattern": "FG_HIDDEN_TOKEN", "hidden": true },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": ".hidden/hidden.ts", "startLine": 1, "endLine": 1 }
+        ]
+      }
+    },
+    {
+      "id": "visibility.gitignore-default",
+      "purpose": "Gitignored paths are absent under rg-compatible defaults.",
+      "args": { "pattern": "FG_IGNORED_TOKEN" },
+      "expectedRoute": "index_preferred",
+      "expected": { "outcome": "no_matches", "locations": [] }
+    },
+    {
+      "id": "visibility.gitignore-disabled",
+      "purpose": "noIgnore=true includes an ignored non-hidden path.",
+      "args": { "pattern": "FG_IGNORED_TOKEN", "noIgnore": true },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "ignored/ignored.ts", "startLine": 1, "endLine": 1 }
+        ]
+      }
+    },
+    {
+      "id": "visibility.hidden-does-not-disable-ignore",
+      "purpose": "hidden=true alone does not override a matching ignore rule.",
+      "args": { "pattern": "FG_HIDDEN_IGNORED_TOKEN", "hidden": true },
+      "expectedRoute": "index_preferred",
+      "expected": { "outcome": "no_matches", "locations": [] }
+    },
+    {
+      "id": "visibility.hidden-and-no-ignore",
+      "purpose": "Both switches are required to include a hidden ignored path.",
+      "args": {
+        "pattern": "FG_HIDDEN_IGNORED_TOKEN",
+        "hidden": true,
+        "noIgnore": true
+      },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": ".hidden-ignored/both.ts", "startLine": 1, "endLine": 1 }
+        ]
+      }
+    },
+    {
+      "id": "regex.common-features",
+      "purpose": "Anchors, alternation, a non-capturing group, and character classes share rg semantics.",
+      "args": {
+        "pattern": "^export (?:const|function) [A-Za-z_][A-Za-z0-9_]*"
+      },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "delete-me.ts", "startLine": 1, "endLine": 1 },
+          { "path": "mutable.ts", "startLine": 1, "endLine": 1 },
+          { "path": "mutable.ts", "startLine": 2, "endLine": 2 },
+          { "path": "src/main.ts", "startLine": 1, "endLine": 1 },
+          { "path": "src/main.ts", "startLine": 2, "endLine": 2 },
+          { "path": "src/main.ts", "startLine": 3, "endLine": 3 },
+          { "path": "src/main.ts", "startLine": 9, "endLine": 9 },
+          { "path": "src/main.ts", "startLine": 10, "endLine": 10 },
+          { "path": "src/sub/deep/deeper.ts", "startLine": 1, "endLine": 1 },
+          { "path": "src/sub/nested.ts", "startLine": 1, "endLine": 1 },
+          { "path": "src/sub/nested.ts", "startLine": 2, "endLine": 2 },
+          { "path": "src/sub/nested.ts", "startLine": 3, "endLine": 3 }
+        ]
+      }
+    },
+    {
+      "id": "multiline.disabled-does-not-cross-lines",
+      "purpose": "Without multiline mode, dot cannot bridge separate records.",
+      "args": { "pattern": "MULTI_BEGIN.*MULTI_END" },
+      "expectedRoute": "index_preferred",
+      "expected": { "outcome": "no_matches", "locations": [] }
+    },
+    {
+      "id": "multiline.enabled-cross-line-match",
+      "purpose": "An explicit newline pattern has one match spanning four lines.",
+      "args": {
+        "pattern": "MULTI_BEGIN\nline alpha\nline beta\nMULTI_END",
+        "multiline": true
+      },
+      "expectedRoute": "rg_fallback_required",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "multiline.txt", "startLine": 1, "endLine": 4 }
+        ]
+      }
+    },
+    {
+      "id": "context.boundaries-and-merge",
+      "purpose": "Context is clipped at file edges, overlapping windows merge, and a real gap remains separate.",
+      "args": {
+        "pattern": "CTX_TARGET",
+        "beforeContext": 2,
+        "afterContext": 2
+      },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "context.txt", "startLine": 1, "endLine": 1 },
+          { "path": "context.txt", "startLine": 4, "endLine": 4 },
+          { "path": "context.txt", "startLine": 10, "endLine": 10 }
+        ],
+        "contextGroups": [
+          { "path": "context.txt", "startLine": 1, "endLine": 6 },
+          { "path": "context.txt", "startLine": 8, "endLine": 10 }
+        ],
+        "omittedLines": [
+          { "path": "context.txt", "line": 7 }
+        ]
+      }
+    },
+    {
+      "id": "render.global-truncation",
+      "purpose": "Correctness sees all matches; capped rendering is global and explicitly reports truncation.",
+      "args": { "pattern": "FG_MANY_TOKEN", "maxResults": 2 },
+      "expectedRoute": "index_preferred",
+      "expected": {
+        "outcome": "matches",
+        "unlimitedMatchCount": 4,
+        "capped": { "limit": 2, "returned": 2, "truncated": true, "totalMatches": 4 }
+      }
+    },
+    {
+      "id": "dialect.extended-mode-fallback",
+      "purpose": "Rust regex extended mode is accepted by rg but rejected conservatively by the Zoekt translator.",
+      "args": { "pattern": "(?x) FG_EXTENDED \\s+ TOKEN" },
+      "expectedRoute": "rg_fallback_required",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 6, "endLine": 6 }
+        ]
+      }
+    },
+    {
+      "id": "dialect.class-intersection-fallback",
+      "purpose": "Rust character-class intersection must not be interpreted with different Go semantics.",
+      "args": { "pattern": "FG_CLASS_[a-z&&[^aeiou]]+" },
+      "expectedRoute": "rg_fallback_required",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 7, "endLine": 7 }
+        ]
+      }
+    },
+    {
+      "id": "dialect.unicode-property-fallback",
+      "purpose": "A long Unicode script property supported by Rust regex is routed around Go/Zoekt dialect differences.",
+      "args": { "pattern": "FG_GREEK_\\p{Script=Greek}+" },
+      "expectedRoute": "rg_fallback_required",
+      "expected": {
+        "outcome": "matches",
+        "locations": [
+          { "path": "src/main.ts", "startLine": 8, "endLine": 8 }
+        ]
+      }
+    },
+    {
+      "id": "error.lookbehind-is-not-empty-success",
+      "purpose": "A regex rejected by default rg is a structured error, not an empty result or implicit PCRE2 request.",
+      "args": { "pattern": "(?<=FG_)RARE" },
+      "expectedRoute": "reject",
+      "expected": { "outcome": "error", "errorClass": "invalid_regex" }
+    },
+    {
+      "id": "error.backreference-is-not-empty-success",
+      "purpose": "A backreference rejected by default rg is a structured error without an implicit engine switch.",
+      "args": { "pattern": "(FG)_\\1" },
+      "expectedRoute": "reject",
+      "expected": { "outcome": "error", "errorClass": "invalid_regex" }
+    }
+  ],
+  "mutationScenarios": [
+    {
+      "id": "freshness.create-untracked",
+      "precondition": { "path": "fresh-created.ts", "state": "absent" },
+      "action": {
+        "kind": "create",
+        "path": "fresh-created.ts",
+        "content": "export const createdProbe = \"FG_CREATED_NOW\";\n"
+      },
+      "immediateAssertions": [
+        { "pattern": "FG_CREATED_NOW", "expectedMatchCount": 1 }
+      ],
+      "afterIndexAckAssertions": [
+        { "pattern": "FG_CREATED_NOW", "expectedMatchCount": 1 }
+      ]
+    },
+    {
+      "id": "freshness.modify-replaces-old-hit",
+      "precondition": {
+        "path": "mutable.ts",
+        "contains": "FG_MUTABLE_OLD"
+      },
+      "action": {
+        "kind": "replace",
+        "path": "mutable.ts",
+        "oldText": "FG_MUTABLE_OLD",
+        "newText": "FG_MUTABLE_NEW"
+      },
+      "immediateAssertions": [
+        { "pattern": "FG_MUTABLE_NEW", "expectedMatchCount": 1 },
+        { "pattern": "FG_MUTABLE_OLD", "expectedMatchCount": 0 }
+      ],
+      "afterIndexAckAssertions": [
+        { "pattern": "FG_MUTABLE_NEW", "expectedMatchCount": 1 },
+        { "pattern": "FG_MUTABLE_OLD", "expectedMatchCount": 0 }
+      ]
+    },
+    {
+      "id": "freshness.delete-suppresses-stale-hit",
+      "precondition": {
+        "path": "delete-me.ts",
+        "contains": "FG_DELETE_ME"
+      },
+      "action": { "kind": "delete", "path": "delete-me.ts" },
+      "immediateAssertions": [
+        { "pattern": "FG_DELETE_ME", "expectedMatchCount": 0 }
+      ],
+      "afterIndexAckAssertions": [
+        { "pattern": "FG_DELETE_ME", "expectedMatchCount": 0 }
+      ]
+    }
+  ]
+}

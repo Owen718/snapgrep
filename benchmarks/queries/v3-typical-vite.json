@@ -1,0 +1,236 @@
+{
+  "schemaVersion": "fast-grep-benchmark-queries/v2-safe",
+  "repo": "Typical-vite",
+  "snapshot": "d62b3360ecebdf11c23e99ffeb4b32e77c9a2ec8",
+  "language": "TypeScript / typical monorepo",
+  "description": "Bounded benchmark-v3 corpus. Only rg and Instant are executed.",
+  "defaults": {
+    "hidden": false,
+    "context": 0,
+    "limit": 50
+  },
+  "summary": {
+    "queryCount": 12,
+    "performanceEligibleCount": 12,
+    "categoryCounts": {
+      "case_insensitive": 1,
+      "escaped_regex": 1,
+      "global_limit": 1,
+      "high_frequency_literal": 1,
+      "literal": 4,
+      "no_match": 1,
+      "path_glob_filter": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "literal.define-config",
+      "category": "literal",
+      "description": "Vite configuration helper.",
+      "request": {
+        "pattern": "defineConfig",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.resolved-config",
+      "category": "literal",
+      "description": "Resolved configuration type.",
+      "request": {
+        "pattern": "ResolvedConfig",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.normalize-path",
+      "category": "literal",
+      "description": "Path normalization helper.",
+      "request": {
+        "pattern": "normalizePath",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "literal.create-server",
+      "category": "literal",
+      "description": "Development server factory.",
+      "request": {
+        "pattern": "createServer",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "escaped.import-meta",
+      "category": "escaped_regex",
+      "description": "Literal dot in import.meta.",
+      "request": {
+        "pattern": "import\\.meta",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.ts-plugin",
+      "category": "path_glob_filter",
+      "description": "Plugin identifier in TypeScript files.",
+      "request": {
+        "pattern": "Plugin",
+        "literal": true,
+        "glob": "*.ts",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.vite-source",
+      "category": "path_glob_filter",
+      "description": "Path helper under the Vite package source.",
+      "request": {
+        "pattern": "normalizePath",
+        "literal": true,
+        "path": "packages/vite/src",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "filter.tests",
+      "category": "path_glob_filter",
+      "description": "Configuration helper in test files.",
+      "request": {
+        "pattern": "defineConfig",
+        "literal": true,
+        "glob": "**/*.test.ts",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "limit.function-25",
+      "category": "global_limit",
+      "description": "Broad function token with limit 25.",
+      "request": {
+        "pattern": "function",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 25
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "capacityPreflight": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "case.define-config",
+      "category": "case_insensitive",
+      "description": "Case-insensitive configuration helper.",
+      "request": {
+        "pattern": "defineconfig",
+        "literal": true,
+        "ignoreCase": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    },
+    {
+      "id": "no-match",
+      "category": "no_match",
+      "description": "Absent token bounded to the README.",
+      "request": {
+        "pattern": "FAST_GREP_SAFE_TYPICAL_ABSENT",
+        "literal": true,
+        "path": "README.md",
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "no_matches"
+      }
+    },
+    {
+      "id": "literal.server",
+      "category": "high_frequency_literal",
+      "description": "Common server identifier.",
+      "request": {
+        "pattern": "server",
+        "literal": true,
+        "hidden": false,
+        "context": 0,
+        "limit": 50
+      },
+      "expectedRoute": "index_preferred",
+      "performanceEligible": true,
+      "expected": {
+        "outcome": "matches"
+      }
+    }
+  ]
+}
