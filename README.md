@@ -59,6 +59,30 @@ Zoekt's per-query cost is dominated by HTTP transport, JSON decoding, and re-ver
 | Cold start to first query | 662 ms | 508 ms |
 | Resident processes | 0 | 0 |
 
+## Why a custom kernel
+
+Not because the trigram algorithm is novel. It isn't — Zoekt has done this well for years, and this project measured itself against Zoekt on every accepted change.
+
+The reason is that buying the index means buying its process boundary, and the boundary costs more than the search. Here is where Zoekt's slowest query on the vite corpus actually spent its 18.32 ms:
+
+| Stage | Time | Share |
+| --- | ---: | ---: |
+| Zoekt's own search | 1.24 ms | 7% |
+| HTTP transport + JSON decode | 3.58 ms | 20% |
+| Verification (mostly `rg` process startup) | 8.34 ms | 45% |
+| Local merge and classification | 5.14 ms | 28% |
+
+**The search itself is 7% of the bill.** The other 93% is the cost of the index living somewhere else: serialise the query, cross a socket, decode JSON, then spawn ripgrep to re-read files the index already had in memory. A single ripgrep spawn has a floor of about 6 ms on this machine — that alone outweighs the entire search.
+
+Owning the kernel is what makes that 93% disappear:
+
+- **The index is mapped into the agent's own memory.** No socket, no JSON, no serialisation. A query is a function call.
+- **Verification reads the mmap'd index, not the disk.** Candidates are confirmed in-process against bytes that are already resident, so there is no spawn and no second read.
+- **Unsupported queries can fail closed instead of approximating.** This one is not a performance argument, and it is the reason a general-purpose library was not enough. An earlier attempt used an off-the-shelf file finder for candidate selection; on the Linux kernel tree it returned 17,767 files where ripgrep found 17,772. Five missing files, from nested `.gitignore` re-inclusion rules — and a final ripgrep pass can only remove extra results, never recover ones the candidate stage already dropped. When the recall boundary is someone else's implementation detail, you cannot prove it, and you cannot fix it.
+- **The index format is tuned for this shape of data** — compressed content blocks, delta-varint gram metadata — which is how the index lands at 0.38–0.91× the size of the source it indexes.
+
+The trade is real and worth stating: one `.node` per platform to build and ship, and every ripgrep behaviour has to be re-proven rather than inherited. Twenty of the twenty-four benchmark queries are served from the index today; the other four hit ripgrep's binary-file and NUL-byte output semantics, which have not been replicated yet, so they fall back rather than guess.
+
 ## Correctness comes first
 
 Every result set is checked against ripgrep on the same snapshot with the same flags. The bar is `missing = 0 && extra = 0` — and also identical ordering, byte offsets, context lines, and truncation behaviour.
