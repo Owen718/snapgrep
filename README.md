@@ -138,6 +138,35 @@ The prebuilt binary targets macOS on Apple Silicon. On other platforms the exten
 
 中文安装说明见 [安装说明.md](artifacts/pi-extension/pi-fast-grep/安装说明.md)。
 
+### With DeepSeek Harness (dsh)
+
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) ships a `grep` tool that spawns the packaged ripgrep binary through `ctx.subprocess.spawn()` on every call — a process launch plus a full scan, each time. This repository includes a Cordis plugin that answers the same tool from the index instead.
+
+Clone somewhere stable, then add one row to your `agent.cordis.yml`, **after** the `tool-fs-search` row so the later registration wins:
+
+```yaml
+- id: snapgrep
+  name: '/absolute/path/to/snapgrep/artifacts/pi-extension/pi-fast-grep/src/dsh-plugin.js'
+```
+
+Measured on the same 17.4 MB vite repository, against what the harness does today:
+
+| Query | Indexed | Harness default | Speedup |
+| --- | ---: | ---: | ---: |
+| createServer | 1.74 ms | 131.0 ms | **75×** |
+| defineConfig | 2.12 ms | 133.3 ms | **63×** |
+| normalizePath | 1.36 ms | 130.0 ms | **96×** |
+| ResolvedConfig | 1.89 ms | 128.3 ms | **68×** |
+
+`pattern`, `path`, and `include` all behave as the built-in tool does, verified match-for-match against ripgrep. `glob` is left to the built-in plugin.
+
+Two details worth knowing:
+
+- **The index lives in `~/.cache/snapgrep/`, never inside the repository.** An index written under the workspace would appear as an untracked file, and since the kernel only serves a clean Git snapshot, it would disable itself after the first query.
+- **Freshness is driven by `tools/pre-execute`.** The index is retired *before* a writing tool dispatches, never after, so a search cannot observe a workspace caught mid-write. The next search rebuilds — measured at about 60 ms — and read-only tools do not trigger a rebuild.
+
+A workspace that is not a clean Git tree falls back to a full ripgrep run: correct, just not accelerated.
+
 ### With oh-my-pi (omp)
 
 [oh-my-pi](https://github.com/can1357/oh-my-pi) ships a compatibility layer that treats `@earendil-works/pi-coding-agent` as an aliased scope, and its extension loader accepts both `.omp` and `.pi` directories. The same package works unmodified:

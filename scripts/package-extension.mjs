@@ -56,7 +56,12 @@ const artifactPackage = {
   private: true,
   type: "module",
   main: "./src/packaged-extension.js",
-  exports: { ".": "./src/packaged-extension.js" },
+  exports: {
+    ".": "./src/packaged-extension.js",
+    // DeepSeek Harness mounts a plugin by module name, so the Cordis entry
+    // needs its own export path.
+    "./dsh": "./src/dsh-plugin.js",
+  },
   files: ["src/*.js", "native/*.node", ".gitignore", "安装说明.md"],
   pi: { extensions: ["./src/packaged-extension.js"] },
   engines: { node: packageSource.engines.node },

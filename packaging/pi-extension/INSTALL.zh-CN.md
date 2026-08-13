@@ -50,6 +50,40 @@ omp
 
 omp 自带的 grep 也很快，但快的原因不同：它把 ripgrep 链接进自己的进程，省掉了启动子进程的开销，单次大约 6 毫秒。这个收益是真实的，但扫描本身没有变——无论在不在进程内，ripgrep 都要读完每个文件的每个字节。本扩展省掉的是扫描：在 17 MB 的仓库上，ripgrep 用 147.7 毫秒，其中约 6 毫秒是启动；索引用 2.1 毫秒，因为它根本不打开其余 99% 的文件。两种做法是叠加关系，不是替代关系。
 
+## 配合 DeepSeek Harness（dsh）使用
+
+装到一个固定位置，然后在 agent 配置里加一行：
+
+```sh
+git clone https://github.com/Owen718/snapgrep.git ~/snapgrep
+```
+
+在你的 `agent.cordis.yml` 里，**放在 `tool-fs-search` 那一行之后**：
+
+```yaml
+- id: snapgrep
+  name: '/Users/你的用户名/snapgrep/artifacts/pi-extension/pi-fast-grep/src/dsh-plugin.js'
+```
+
+顺序重要：后注册的同名工具生效，所以要排在内置搜索之后，`grep` 才会走索引。`glob` 仍由内置插件提供，不受影响。
+
+dsh 自带的 grep 每次调用都会启动一个 ripgrep 子进程再扫全部文件。换成索引之后，在 17 MB 的 vite 仓库上实测：
+
+| 查询 | 索引 | dsh 原有方式 | 倍数 |
+| --- | ---: | ---: | ---: |
+| createServer | 1.74 ms | 131.0 ms | 75× |
+| defineConfig | 2.12 ms | 133.3 ms | 63× |
+| normalizePath | 1.36 ms | 130.0 ms | 96× |
+| ResolvedConfig | 1.89 ms | 128.3 ms | 68× |
+
+结果与 ripgrep 逐条一致，`pattern`、`path`、`include` 三个参数的行为都对齐过。
+
+索引存放在 `~/.cache/snapgrep/` 下，**不会写进你的仓库**，也就不会让 `git status` 变脏。
+
+改文件之后：dsh 在执行 `edit`、`write`、`bash` 这类工具之前会先通知插件，索引随即失效，下一次搜索重建后即可搜到改动，实测约 60 毫秒。`read`、`glob` 这类只读工具不会触发重建。
+
+如果仓库不是 git 仓库、或者工作区不干净，搜索会退回完整 ripgrep，结果依然正确，只是没有加速。
+
 ## 立即确认
 
 进入安装了扩展的项目，执行：
