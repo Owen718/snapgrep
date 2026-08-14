@@ -150,24 +150,14 @@ The prebuilt binary targets macOS on Apple Silicon. On other platforms the exten
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) ships a `grep` tool that spawns the packaged ripgrep binary through `ctx.subprocess.spawn()` on every call — a process launch plus a full scan, each time. This repository includes a Cordis plugin that answers from the index instead.
 
-The harness manages plugins through pnpm:
+The harness resolves plugins through pnpm and a profile bundle list, so it installs differently from Pi:
 
 ```sh
 npm i -g pnpm
-git clone https://github.com/Owen718/snapgrep.git ~/snapgrep
-
-dsh plugin --profile headless add "file:$HOME/snapgrep/artifacts/pi-extension/pi-fast-grep"
+curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh -s -- --dsh
 ```
 
-Then add it to the profile's bundle list in `~/.dsh/profiles/<profile>/package.json`:
-
-```json
-"dsh": { "profile": { "bundles": [
-  "@deepseek-ai/dsh-base",
-  "@deepseek-ai/dsh-headless",
-  "pi-fast-grep-extension"
-] } }
-```
+That registers the package *and* adds it to the profile's bundle list. Installing alone is not enough — a bundle stays inert until it is listed there, and the harness reports it as a plain dependency. Target another profile with `DSH_PROFILE`.
 
 Verify with `dsh --profile headless --dump-config | grep snapgrep`.
 

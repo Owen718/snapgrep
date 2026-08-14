@@ -52,37 +52,16 @@ omp 自带的 grep 也很快，但快的原因不同：它把 ripgrep 链接进�
 
 ## 配合 DeepSeek Harness（dsh）使用
 
-需要先装 pnpm（dsh 的插件管理依赖它）：
+dsh 通过 pnpm 和 profile 的 bundle 列表管理插件，装法和 pi 不同：
 
 ```sh
 npm i -g pnpm
+curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh -s -- --dsh
 ```
 
-然后安装插件并启用：
+脚本会注册这个包**并且**把它加进 profile 的 bundle 列表。只装不加是不够的——包在列表里出现之前一直是死的，dsh 会把它当成普通依赖。要装到其他 profile，用 `DSH_PROFILE=<名字>`。
 
-```sh
-git clone https://github.com/Owen718/snapgrep.git ~/snapgrep
-
-dsh plugin --profile headless add "file:$HOME/snapgrep/artifacts/pi-extension/pi-fast-grep"
-```
-
-装完还要把它加进 profile 的 bundle 列表。编辑 `~/.dsh/profiles/<你的 profile>/package.json`，在 `dsh.profile.bundles` 数组末尾加一项：
-
-```json
-{
-  "dsh": {
-    "profile": {
-      "bundles": [
-        "@deepseek-ai/dsh-base",
-        "@deepseek-ai/dsh-headless",
-        "pi-fast-grep-extension"
-      ]
-    }
-  }
-}
-```
-
-确认是否生效：
+验证：
 
 ```sh
 dsh --profile headless --dump-config | grep snapgrep
