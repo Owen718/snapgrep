@@ -2,7 +2,7 @@
 
 <p align="center">
   An in-process trigram index that makes code search in <a href="https://github.com/earendil-works/pi">Pi</a><br>
-  <b>20–70× faster than ripgrep</b> — with results that are byte-for-byte identical.
+  <b>Typically 40–70× faster than ripgrep</b>, and never wrong — results are byte-for-byte identical.
 </p>
 
 <p align="center">
@@ -36,7 +36,19 @@ All numbers are P50 over 7 measured iterations after 3 warmups, kernel and ripgr
 | `import\.meta`, 538 candidate files | 4.179 ms | 156.5 ms | **37×** |
 | Path-filtered search | 0.973 ms | 8.0 ms | **8×** |
 
-The last row matters most: once a path filter has already narrowed ripgrep's work, the index advantage shrinks. Speedup comes from skipping files, so it tracks how many files ripgrep would otherwise have to read.
+### Where the speedup goes away
+
+Speedup comes from *not reading files*, so it tracks how many files ripgrep would otherwise have to open. Push that number to its limit and the advantage disappears. From an independent run on Linux, single core, a 20 MB / 5,001-file repository:
+
+| Scenario | snapgrep | ripgrep | Speedup |
+| --- | ---: | ---: | ---: |
+| Every file matches (5,001 files) | 6.98 ms | 18.5 ms | **2.6×** |
+| 300 files match | 0.22 ms | 14.1 ms | 63.5× |
+| One file matches (rare token) | 0.006 ms | 14.2 ms | 2458× |
+
+**When every file matches, the index has nothing to skip, and 2.6× is all it can win.** That is the number to plan around for a query like `function` in a JavaScript repository. The four-digit figures are the other extreme: ripgrep must scan the whole tree to prove a token appears once, while the index answers from a posting list.
+
+Most real agent searches sit in the middle — a symbol name in a few dozen to a few hundred files.
 
 ### Against Zoekt
 
@@ -169,10 +181,12 @@ Measured on the same 17.4 MB vite repository, against what the harness does toda
 
 | Query | Indexed | Harness default | Speedup |
 | --- | ---: | ---: | ---: |
-| createServer | 1.74 ms | 131.0 ms | **75×** |
-| defineConfig | 2.12 ms | 133.3 ms | **63×** |
-| normalizePath | 1.36 ms | 130.0 ms | **96×** |
-| ResolvedConfig | 1.89 ms | 128.3 ms | **68×** |
+| createServer | 1.74 ms | 131.0 ms | 75× |
+| defineConfig | 2.12 ms | 133.3 ms | 63× |
+| normalizePath | 1.36 ms | 130.0 ms | 96× |
+| ResolvedConfig | 1.89 ms | 128.3 ms | 68× |
+
+Those came off an idle machine. Re-measured under load average 3.9 the same queries land at **50–63×** — both sides slow down, but the indexed side is small enough that fixed costs weigh more on it. Expect the lower end on a busy laptop.
 
 Three things this had to get right, each found by running it rather than reading about it:
 

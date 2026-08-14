@@ -87,6 +87,21 @@ jobs:
           file native/kernel/binding/*.node | grep -q 'x86_64' \
             || { echo "cross-compiled addon is not x86_64"; exit 1; }
 
+      # The native suite diffs every result against ripgrep, so the runner
+      # needs one. None of the images ship it.
+      - name: Install ripgrep
+        if: matrix.rust-target == ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v rg >/dev/null; then rg --version | head -1; exit 0; fi
+          case "${{ runner.os }}" in
+            Linux)   sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep ;;
+            macOS)   brew install ripgrep ;;
+            Windows) choco install ripgrep -y --no-progress ;;
+          esac
+          rg --version | head -1
+
       # The kernel is the whole product, so exercise it on the platform that
       # just built it. Without this the native path only ever ran on a
       # developer's Mac. Cross-compiled output cannot run here.
