@@ -1,13 +1,5 @@
 import { writeFileSync } from "node:fs";
-import {
-  readFile,
-  readdir,
-  mkdtemp,
-  mkdir,
-  rm,
-  symlink,
-  writeFile,
-} from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -83,7 +75,7 @@ describe.skipIf(!nativeEnabled)("opt-in kernel engine", () => {
   let addonPath: string;
 
   beforeEach(async () => {
-    fixture = await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-engine-"));
+    fixture = await realpath(await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-engine-")));
     outside = `${fixture}-outside.txt`;
     await writeFile(outside, "before\r\nneedle EXTERNAL SECRET\r\nafter\r\n");
     await mkdir(path.join(fixture, "src"), { recursive: true });
@@ -1324,7 +1316,7 @@ describe.skipIf(!nativeEnabled)("opt-in kernel engine", () => {
     await expect(dirty.start()).rejects.toThrow("clean Git snapshot");
     dirty.close();
 
-    const nonGitRoot = await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-non-git-"));
+    const nonGitRoot = await realpath(await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-non-git-")));
     try {
       await writeFile(path.join(nonGitRoot, "source.txt"), "needle\n");
       const nonGit = new OptInKernelEngine({

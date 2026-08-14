@@ -72,7 +72,7 @@ describe.skipIf(!nativeEnabled)("native kernel binding", () => {
   let fixture: string;
 
   beforeEach(async () => {
-    fixture = await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-napi-"));
+    fixture = await realpath(await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-napi-")));
     await mkdir(path.join(fixture, "src"), { recursive: true });
     await writeFile(path.join(fixture, "A.txt"), "needle needle\ncafé needle\n");
     await writeFile(path.join(fixture, "src", "é.txt"), "prefix needle suffix\n");
@@ -810,7 +810,7 @@ describe.skipIf(!nativeEnabled)("native kernel binding", () => {
       const addons = (await readdir(bindingDirectory)).filter((entry) => entry.endsWith(".node"));
       expect(addons).toHaveLength(1);
       const binding = loadKernelBinding(path.join(bindingDirectory, addons[0] as string));
-      const outside = await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-outside-"));
+      const outside = await realpath(await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-outside-")));
       try {
         await mkdir(path.join(fixture, "safe"));
         await writeFile(path.join(fixture, "safe", "a.txt"), "inside-a");

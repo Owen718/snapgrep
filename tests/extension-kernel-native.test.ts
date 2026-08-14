@@ -1,4 +1,4 @@
-import { readdir, mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -34,7 +34,7 @@ describe.skipIf(!nativeEnabled)("Pi kernel-dev native adapter", () => {
   let shutdown: (() => Promise<void>) | undefined;
 
   beforeEach(async () => {
-    fixture = await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-extension-"));
+    fixture = await realpath(await mkdtemp(path.join(tmpdir(), "pi-fast-grep-kernel-extension-")));
     await mkdir(path.join(fixture, "src"), { recursive: true });
     await writeFile(path.join(fixture, ".gitignore"), ".pi/index/\n");
     await writeFile(path.join(fixture, "A.txt"), "before\nneedle original\nafter\n");
