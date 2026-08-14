@@ -25,12 +25,15 @@ export async function resolvePackagedKernelAddonPath(
   platform: string = process.platform,
   architecture: string = process.arch,
 ): Promise<string> {
-  const filename = `pi-fast-grep-kernel.${platform}-${architecture}.node`;
-  const candidates = [
-    path.resolve(moduleDirectory, "../native", filename),
-    path.resolve(moduleDirectory, "../native/kernel/binding", filename),
-    path.resolve(moduleDirectory, "../../native/kernel/binding", filename),
-  ];
+  const candidates: string[] = [];
+  for (const target of addonTargets(platform, architecture)) {
+    const filename = `pi-fast-grep-kernel.${target}.node`;
+    candidates.push(
+      path.resolve(moduleDirectory, "../native", filename),
+      path.resolve(moduleDirectory, "../native/kernel/binding", filename),
+      path.resolve(moduleDirectory, "../../native/kernel/binding", filename),
+    );
+  }
   for (const addonPath of candidates) {
     try {
       const addonStat = await stat(addonPath);
@@ -42,4 +45,19 @@ export async function resolvePackagedKernelAddonPath(
   throw new Error(
     `packaged kernel addon is missing for ${platform}-${architecture}; checked ${candidates.join(", ")}`,
   );
+}
+
+/**
+ * Addon basenames to try, most specific first.
+ *
+ * On Linux, napi names the output after the full Rust target triple, so a
+ * glibc build lands as `linux-x64-gnu` and a musl one as `linux-x64-musl`.
+ * Those binaries are not interchangeable, so the suffix is kept rather than
+ * renamed away; the bare `linux-x64` form stays in the list for artifacts built
+ * before this distinction was handled.
+ */
+function addonTargets(platform: string, architecture: string): string[] {
+  const base = `${platform}-${architecture}`;
+  if (platform !== "linux") return [base];
+  return [`${base}-gnu`, `${base}-musl`, base];
 }

@@ -87,6 +87,19 @@ jobs:
           file native/kernel/binding/*.node | grep -q 'x86_64' \
             || { echo "cross-compiled addon is not x86_64"; exit 1; }
 
+      # The kernel is the whole product, so exercise it on the platform that
+      # just built it. Without this the native path only ever ran on a
+      # developer's Mac. Cross-compiled output cannot run here.
+      - name: Run the native kernel tests
+        if: matrix.rust-target == ''
+        shell: bash
+        env:
+          PI_FAST_GREP_NATIVE_TEST: '1'
+        run: |
+          set -euo pipefail
+          npm ci
+          npx vitest run tests/kernel-binding-native.test.ts tests/kernel-engine-native.test.ts
+
       - uses: actions/upload-artifact@v4
         with:
           name: addon-${{ matrix.target }}
@@ -131,9 +144,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # napi suffixes Linux output with the libc flavour (linux-x64-gnu), so
+          # each target is matched by prefix rather than by an exact filename.
           for target in darwin-arm64 darwin-x64 linux-x64 linux-arm64 win32-x64; do
-            file="artifacts/pi-extension/pi-fast-grep/native/pi-fast-grep-kernel.${target}.node"
-            test -f "$file" || { echo "missing addon for ${target}"; exit 1; }
+            found=$(ls artifacts/pi-extension/pi-fast-grep/native/ \
+              | grep -E "^pi-fast-grep-kernel\.${target}(-[a-z]+)?\.node$" || true)
+            test -n "$found" || { echo "missing addon for ${target}"; exit 1; }
+            echo "  ${target} -> ${found}"
           done
           echo "all five targets present"
 

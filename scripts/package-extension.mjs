@@ -20,6 +20,9 @@ if (!sourceStat?.isDirectory()) {
 const addonNames = (await readdir(bindingDirectory).catch(() => []))
   .filter((name) => name.startsWith("pi-fast-grep-kernel.") && name.endsWith(".node"))
   .sort();
+// napi names Linux output after the full target triple (linux-x64-gnu), which
+// is the name the loader looks for first. Nothing is renamed here: a glibc
+// build and a musl build are not interchangeable, so the suffix has to survive.
 if (addonNames.length === 0) {
   throw new Error("no native addon was found; run npm run build:kernel first");
 }

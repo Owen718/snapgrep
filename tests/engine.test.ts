@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { access, cp, mkdtemp, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -8,6 +9,14 @@ import { FastGrepEngine } from "../src/engine.js";
 
 const execFileAsync = promisify(execFile);
 const projectRoot = path.resolve(import.meta.dirname, "..");
+
+// This suite drives a real Zoekt sidecar, which only exists after
+// scripts/build-zoekt.sh has run (and that needs a Go toolchain). Skip rather
+// than fail when the binaries are absent, so a fresh clone can run `npm test`
+// without building Zoekt first.
+const zoektBinaries = ["zoekt-git-index", "zoekt-index", "zoekt-webserver"];
+const zoektAvailable = zoektBinaries.every((name) =>
+  existsSync(path.join(projectRoot, ".tools", name)));
 const fixture = path.join(projectRoot, "benchmarks", "fixtures", "core");
 
 async function git(cwd: string, ...args: string[]): Promise<string> {
@@ -15,7 +24,7 @@ async function git(cwd: string, ...args: string[]): Promise<string> {
   return result.stdout.trim();
 }
 
-describe.sequential("FastGrepEngine with a real Zoekt sidecar", () => {
+describe.skipIf(!zoektAvailable).sequential("FastGrepEngine with a real Zoekt sidecar", () => {
   let root: string;
   let engine: FastGrepEngine;
 
