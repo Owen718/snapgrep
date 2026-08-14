@@ -119,6 +119,10 @@ export class DirtyTracker {
                     return;
                 this.watcherHealthy = false;
                 this.markWorkspaceUnknown();
+                // Coverage is already incomplete and a live watcher keeps holding
+                // inotify descriptors, so release it and stay on the conservative path.
+                this.watcher = undefined;
+                watcher.close();
             });
             watcher.on("close", () => {
                 if (this.watcher !== watcher)

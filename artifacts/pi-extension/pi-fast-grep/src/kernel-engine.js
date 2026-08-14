@@ -977,10 +977,19 @@ export class OptInKernelEngine {
                 this.markWorkspaceChanged(filename === null ? "kernel_watcher_unknown" : "kernel_workspace_event");
             });
             this.watcher = watcher;
-            watcher.once("error", () => {
+            // `on`, not `once`. A recursive watch reports a failure per directory it
+            // cannot cover, so a one-shot listener detaches after the first one and
+            // leaves the rest unhandled -- which takes the host process down. Hitting
+            // the inotify limit under a large tree emits many.
+            watcher.on("error", () => {
                 if (this.watcher !== watcher)
                     return;
                 this.markWorkspaceChanged("kernel_watcher_error");
+                // Coverage is already incomplete, and on Linux a live watcher keeps
+                // holding inotify descriptors, so release it. Searches fall back to
+                // ripgrep from here, which is correct, just not accelerated.
+                this.watcher = undefined;
+                watcher.close();
             });
             watcher.once("close", () => {
                 if (this.watcher !== watcher)
