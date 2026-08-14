@@ -116,18 +116,14 @@ These are correctness boundaries, not missing features. Each one is a case where
 ## Install
 
 ```sh
-git clone https://github.com/Owen718/snapgrep.git
-cd snapgrep
-
-mkdir -p ~/.pi/agent/extensions
-cp -R artifacts/pi-extension/pi-fast-grep ~/.pi/agent/extensions/
-
-pi
+curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh
 ```
 
-That is the whole install. Nothing is compiled, no daemon is started, and no shell profile is touched — the packaged extension already contains the compiled native addon.
+Detects your platform, downloads only the addon that machine can run (~1.2 MB), and installs into `~/.pi/agent/extensions`. Nothing is compiled and no daemon is started.
 
-Pi's built-in `grep` is replaced automatically, in every project. To confirm it is active, ask Pi to search for a string you know exists: the tool detail will show `actualBackend: kernel`.
+Then start `pi` — its built-in `grep` is replaced automatically, in every project. To confirm it is active, ask Pi to search for a string you know exists: the tool detail will show `actualBackend: kernel`.
+
+Set `PI_EXTENSIONS_DIR` to install somewhere else. Prefer to do it by hand, or want one copy that works on every machine? Grab `snapgrep-extension-all-platforms.tar.gz` from the [release](https://github.com/Owen718/snapgrep/releases/latest) — it carries all five addons and picks the right one at load time.
 
 <details>
 <summary>Install into a single project instead</summary>

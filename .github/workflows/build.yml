@@ -173,8 +173,37 @@ jobs:
           done
           echo "all five targets present"
 
+      # Per-platform archives so install.sh downloads ~1.2 MB instead of 6 MB.
+      - name: Build the release archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          src=artifacts/pi-extension/pi-fast-grep
+          out=artifacts/release
+          mkdir -p "$out"
+          tar czf "$out/snapgrep-extension-all-platforms.tar.gz" -C artifacts/pi-extension pi-fast-grep
+          for addon in "$src"/native/*.node; do
+            target=$(basename "$addon" .node)
+            target=${target#pi-fast-grep-kernel.}
+            stage=$(mktemp -d)
+            mkdir -p "$stage/pi-fast-grep/native"
+            cp -R "$src"/src "$stage/pi-fast-grep/"
+            cp "$src"/package.json "$src"/cordis.patch.yml "$stage/pi-fast-grep/"
+            cp "$src"/*.md "$stage/pi-fast-grep/" 2>/dev/null || true
+            cp "$addon" "$stage/pi-fast-grep/native/"
+            tar czf "$out/snapgrep-extension-${target}.tar.gz" -C "$stage" pi-fast-grep
+            rm -rf "$stage"
+          done
+          ls -la "$out"
+
       - uses: actions/upload-artifact@v4
         with:
           name: pi-fast-grep-extension
           path: artifacts/pi-extension/pi-fast-grep
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-archives
+          path: artifacts/release/*.tar.gz
           if-no-files-found: error
