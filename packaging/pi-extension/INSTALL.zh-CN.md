@@ -2,19 +2,15 @@
 
 此目录已经包含编译后的扩展和当前 Mac（Apple 芯片）所需的原生搜索组件，不需要运行 npm 或 Cargo。
 
-## 安装（推荐：全局安装一次，所有项目都生效）
+## 安装
 
 ```sh
-git clone https://github.com/Owen718/snapgrep.git
-cd snapgrep
-
-mkdir -p ~/.pi/agent/extensions
-cp -R artifacts/pi-extension/pi-fast-grep ~/.pi/agent/extensions/
-
-pi
+npm install -g snapgrep
 ```
 
-装完就能用。不编译、不启动后台进程、不改你的 shell 配置——产物里已经带了编译好的原生组件。
+装完直接开 pi，内置 grep 自动被替换。不编译、不启动后台进程、不改你的 shell 配置。
+
+npm 只会下载你这台机器能用的那一个原生组件，约 1.2 MB。
 
 ## 只装到单个项目
 
@@ -52,14 +48,11 @@ omp 自带的 grep 也很快，但快的原因不同：它把 ripgrep 链接进�
 
 ## 配合 DeepSeek Harness（dsh）使用
 
-dsh 通过 pnpm 和 profile 的 bundle 列表管理插件，装法和 pi 不同：
-
 ```sh
-npm i -g pnpm
-curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh -s -- --dsh
+dsh plugin --profile headless add snapgrep
 ```
 
-脚本会注册这个包**并且**把它加进 profile 的 bundle 列表。只装不加是不够的——包在列表里出现之前一直是死的，dsh 会把它当成普通依赖。要装到其他 profile，用 `DSH_PROFILE=<名字>`。
+一条命令即可：dsh 会自动把它加进 profile 的 bundle 列表。装到其他 profile 就把 `headless` 换掉。
 
 验证：
 

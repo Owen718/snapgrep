@@ -14,6 +14,71 @@
   No sidecar process. No daemon. A single 3.2 MB native addon loaded inside the agent process.
 </p>
 
+## Install
+
+### Pi
+
+```sh
+npm install -g snapgrep
+```
+
+Pi's built-in `grep` is replaced automatically, in every project. To confirm, ask Pi to search for a string you know exists — the tool detail shows `actualBackend: kernel`.
+
+### oh-my-pi (omp)
+
+```sh
+npm install -g snapgrep
+```
+
+Same package, no changes: omp treats `@earendil-works/pi-coding-agent` as an aliased scope and its loader accepts `.pi` directories alongside `.omp`.
+
+### DeepSeek Harness (dsh)
+
+```sh
+dsh plugin --profile headless add snapgrep
+```
+
+Verify with `dsh --profile headless --dump-config | grep snapgrep`.
+
+It replaces both `grep` and `glob`: the registry rejects a duplicate tool name outright, so the built-in search row is disabled and this plugin supplies both. `glob` runs the same ripgrep invocation the built-in used.
+
+---
+
+Only the addon your machine can run is downloaded — about 1.2 MB, two packages. Nothing is compiled and no daemon is started.
+
+Prebuilt for macOS (Apple Silicon and Intel), Linux (x64 and arm64, glibc), and Windows x64. Alpine/musl is not built yet; on an unsupported platform the extension names the exact file it could not find rather than failing silently.
+
+<details>
+<summary><b>Other ways to install</b> — no npm, single project, or one copy for every machine</summary>
+
+Without npm, a script fetches the matching archive from the [latest release](https://github.com/Owen718/snapgrep/releases/latest) and installs into `~/.pi/agent/extensions`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh
+```
+
+Set `PI_EXTENSIONS_DIR` to install elsewhere. For a directory that works on any machine, `snapgrep-extension-all-platforms.tar.gz` from the same release carries all five addons and picks the right one at load time.
+
+Into a single project rather than globally:
+
+```sh
+git clone https://github.com/Owen718/snapgrep.git
+
+mkdir -p /path/to/your-project/.pi/extensions
+cp -R snapgrep/artifacts/pi-extension/pi-fast-grep /path/to/your-project/.pi/extensions/
+
+cd /path/to/your-project
+pi --approve
+```
+
+`--approve` is only needed the first time, to trust a project-level extension. The artifact carries a `.gitignore` scoped to its own directory, so installing it will not make your repository dirty.
+
+Building from source: `npm run build:kernel && npm run package:extension`.
+
+</details>
+
+中文安装说明见 [安装说明.md](artifacts/pi-extension/pi-fast-grep/安装说明.md)。
+
 ## Why this exists
 
 Coding agents search constantly. Every `grep` call in a large repository means ripgrep reads every byte on disk again — hundreds of milliseconds, several times a minute, forever.
@@ -113,104 +178,6 @@ Currently falling back:
 - Glob syntax outside the proven subset (`!`, `?`, `[]`, `{}`)
 
 These are correctness boundaries, not missing features. Each one is a case where matching ripgrep's exact behaviour has not been proven yet, so the index refuses to guess.
-
-## Install
-
-```sh
-npm install -g snapgrep
-```
-
-npm ships the addon as a per-platform optional dependency, so only the one your machine can run is downloaded — about 1.2 MB. Nothing is compiled and no daemon is started.
-
-<details>
-<summary>Without npm, or one copy for every machine</summary>
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh
-```
-
-Detects the platform, fetches the matching archive from the [latest release](https://github.com/Owen718/snapgrep/releases/latest), and installs into `~/.pi/agent/extensions`. Set `PI_EXTENSIONS_DIR` to install elsewhere, or grab `snapgrep-extension-all-platforms.tar.gz` for a directory that works on any machine.
-
-</details>
-
-Then start `pi` — its built-in `grep` is replaced automatically, in every project. To confirm it is active, ask Pi to search for a string you know exists: the tool detail will show `actualBackend: kernel`.
-
-<details>
-<summary>Install into a single project instead</summary>
-
-```sh
-git clone https://github.com/Owen718/snapgrep.git
-
-mkdir -p /path/to/your-project/.pi/extensions
-cp -R snapgrep/artifacts/pi-extension/pi-fast-grep /path/to/your-project/.pi/extensions/
-
-cd /path/to/your-project
-pi --approve
-```
-
-`--approve` is only needed the first time, to trust a project-level extension. The artifact carries a `.gitignore` scoped to its own directory, so installing it will not make your repository dirty.
-
-</details>
-
-Prebuilt addons ship for macOS (Apple Silicon and Intel), Linux (x64 and arm64, glibc), and Windows x64. Alpine/musl is not built yet; on any unsupported platform the extension names the exact file it could not find rather than failing silently, and you can build one with `npm run build:kernel && npm run package:extension`.
-
-中文安装说明见 [安装说明.md](artifacts/pi-extension/pi-fast-grep/安装说明.md)。
-
-### With DeepSeek Harness (dsh)
-
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) ships a `grep` tool that spawns the packaged ripgrep binary through `ctx.subprocess.spawn()` on every call — a process launch plus a full scan, each time. This repository includes a Cordis plugin that answers from the index instead.
-
-The harness resolves plugins through pnpm and a profile bundle list, so it installs differently from Pi:
-
-```sh
-npm i -g pnpm
-curl -fsSL https://raw.githubusercontent.com/Owen718/snapgrep/main/install.sh | sh -s -- --dsh
-```
-
-That registers the package *and* adds it to the profile's bundle list. Installing alone is not enough — a bundle stays inert until it is listed there, and the harness reports it as a plain dependency. Target another profile with `DSH_PROFILE`.
-
-Verify with `dsh --profile headless --dump-config | grep snapgrep`.
-
-**Verified end to end**, not inferred from types: a real DeepSeek V4-Flash session calling both tools returns correct results, and the index file appears under `~/.cache/snapgrep/` — proof the query was served from the index rather than quietly falling back.
-
-Measured on the same 17.4 MB vite repository, against what the harness does today:
-
-| Query | Indexed | Harness default | Speedup |
-| --- | ---: | ---: | ---: |
-| createServer | 1.74 ms | 131.0 ms | 75× |
-| defineConfig | 2.12 ms | 133.3 ms | 63× |
-| normalizePath | 1.36 ms | 130.0 ms | 96× |
-| ResolvedConfig | 1.89 ms | 128.3 ms | 68× |
-
-Those came off an idle machine. Re-measured under load average 3.9 the same queries land at **50–63×** — both sides slow down, but the indexed side is small enough that fixed costs weigh more on it. Expect the lower end on a busy laptop.
-
-Three things this had to get right, each found by running it rather than reading about it:
-
-- **The registry rejects a duplicate tool name outright** — there is no last-one-wins. The plugin's bundle patch disables the built-in `tool-fs-search` row and supplies both `grep` and `glob` in its place. `glob` runs the identical ripgrep invocation the built-in used: same flags, same modification-time ordering, same VCS exclusions.
-- **The index lives in `~/.cache/snapgrep/`, never inside the repository.** An index written under the workspace appears as an untracked file, and since the kernel only serves a clean Git snapshot, it would disable itself after one query.
-- **Freshness runs off `tools/pre-execute`,** which fires before a writing tool dispatches, so a search cannot observe a workspace caught mid-write. Rebuild costs about 60 ms; read-only tools do not trigger one.
-
-A workspace that is not a clean Git tree falls back to a full ripgrep run: correct, just not accelerated.
-
-### With oh-my-pi (omp)
-
-[oh-my-pi](https://github.com/can1357/oh-my-pi) ships a compatibility layer that treats `@earendil-works/pi-coding-agent` as an aliased scope, and its extension loader accepts both `.omp` and `.pi` directories. The same package works unmodified:
-
-```sh
-git clone https://github.com/Owen718/snapgrep.git
-cd snapgrep
-
-mkdir -p ~/.pi/agent/extensions
-cp -R artifacts/pi-extension/pi-fast-grep ~/.pi/agent/extensions/
-
-omp
-```
-
-Every API this extension depends on is present in omp's shim — `defineTool`, `createGrepToolDefinition`, `registerTool`, `registerFlag`, `getFlag`, and the `session_start` / `tool_execution_start` / `user_bash` / `tool_result` / `session_shutdown` events that drive index invalidation and recovery. This was verified against the published type definitions of `@oh-my-pi/pi-coding-agent`, not by running it — if something misbehaves, please open an issue.
-
-**omp already has a fast grep**, and it is fast for a different reason: it links ripgrep into its own process, which removes the fork-exec cost of shelling out. That is a real saving — a single ripgrep spawn costs roughly 6 ms — but the scan itself is unchanged. Linked in or not, ripgrep still reads every byte of every eligible file.
-
-snapgrep removes the scan instead. On the 17 MB corpus above, ripgrep takes 147.7 ms, of which about 6 ms is process startup. An in-process ripgrep lands somewhere near 141 ms; the index answers in 2.1 ms because it never opens the other 99% of the files. The two techniques compose rather than compete — candidate selection by index, exact verification in-process, which is what this project already does internally.
 
 ## Staying fresh
 
