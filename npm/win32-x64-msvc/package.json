@@ -1,0 +1,23 @@
+{
+  "name": "snapgrep-win32-x64-msvc",
+  "version": "0.1.0",
+  "description": "Prebuilt snapgrep search kernel for win32 x64.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Owen718/snapgrep.git"
+  },
+  "main": "pi-fast-grep-kernel.win32-x64-msvc.node",
+  "files": [
+    "pi-fast-grep-kernel.win32-x64-msvc.node"
+  ],
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

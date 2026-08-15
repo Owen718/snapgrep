@@ -1,0 +1,23 @@
+{
+  "name": "snapgrep-darwin-x64",
+  "version": "0.1.0",
+  "description": "Prebuilt snapgrep search kernel for darwin x64.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Owen718/snapgrep.git"
+  },
+  "main": "pi-fast-grep-kernel.darwin-x64.node",
+  "files": [
+    "pi-fast-grep-kernel.darwin-x64.node"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

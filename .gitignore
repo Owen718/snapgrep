@@ -5,3 +5,4 @@ target/
 .deps/
 .pi/
 *.log
+.DS_Store

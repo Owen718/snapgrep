@@ -7,6 +7,7 @@
  * it installed.
  */
 
+import { createRequire } from "node:module";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -25,8 +26,20 @@ export async function resolvePackagedKernelAddonPath(
   platform: string = process.platform,
   architecture: string = process.arch,
 ): Promise<string> {
+  const targets = addonTargets(platform, architecture);
+
+  // Installed from npm, the addon arrives as an optional dependency that npm
+  // only unpacks when its `os`/`cpu` match, so resolution — not a path guess —
+  // is what finds it. Downloaded as a release archive it sits beside this
+  // module instead. Both layouts are supported, and the resolver runs first
+  // because an npm install is the more specific answer.
+  for (const target of targets) {
+    const resolved = resolveFromNodeModules(`snapgrep-${target}`, moduleDirectory);
+    if (resolved !== undefined) return resolved;
+  }
+
   const candidates: string[] = [];
-  for (const target of addonTargets(platform, architecture)) {
+  for (const target of targets) {
     const filename = `pi-fast-grep-kernel.${target}.node`;
     candidates.push(
       path.resolve(moduleDirectory, "../native", filename),
@@ -43,8 +56,28 @@ export async function resolvePackagedKernelAddonPath(
     }
   }
   throw new Error(
-    `packaged kernel addon is missing for ${platform}-${architecture}; checked ${candidates.join(", ")}`,
+    `packaged kernel addon is missing for ${platform}-${architecture}; `
+    + `no installed snapgrep-${targets[0]} package, and none of: ${candidates.join(", ")}`,
   );
+}
+
+/**
+ * Locate a per-platform addon package through Node's resolver.
+ *
+ * Returns `undefined` when the package is absent, which is the normal case for
+ * every platform except the host's: npm skips optional dependencies whose
+ * `os`/`cpu` do not match, so four of the five are expected to be missing.
+ */
+function resolveFromNodeModules(
+  packageName: string,
+  moduleDirectory: string,
+): string | undefined {
+  try {
+    const require = createRequire(path.join(moduleDirectory, "resolver.cjs"));
+    return require.resolve(packageName);
+  } catch {
+    return undefined;
+  }
 }
 
 /**

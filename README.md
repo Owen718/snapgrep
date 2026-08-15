@@ -2,7 +2,8 @@
 
 <p align="center">
   An in-process trigram index that makes code search in <a href="https://github.com/earendil-works/pi">Pi</a><br>
-  <b>Typically 40–70× faster than ripgrep</b>, and never wrong — results are byte-for-byte identical.
+  <b>Typically 40–70× faster than ripgrep</b> on a warm index —<br>
+  and every result is checked against ripgrep, byte for byte.
 </p>
 
 <p align="center">
@@ -99,7 +100,7 @@ The trade is real and worth stating: one `.node` per platform to build and ship,
 
 Every result set is checked against ripgrep on the same snapshot with the same flags. The bar is `missing = 0 && extra = 0` — and also identical ordering, byte offsets, context lines, and truncation behaviour.
 
-**24 of 24 queries match ripgrep exactly.** That has held on every accepted change.
+**All 24 conformance queries match ripgrep exactly.** 20 are answered from the index; the other 4 fall back to ripgrep, and the comparison covers both paths. That has held on every accepted change.
 
 Anything the index cannot serve *correctly* falls back to a full ripgrep search rather than returning a partial answer. Fallback is reported in the result metadata with a reason, so an unsupported query never looks like an empty result.
 
@@ -142,7 +143,7 @@ pi --approve
 
 </details>
 
-The prebuilt binary targets macOS on Apple Silicon. On other platforms the extension reports exactly which native file is missing instead of failing silently; build from source with `npm run build:kernel && npm run package:extension`.
+Prebuilt addons ship for macOS (Apple Silicon and Intel), Linux (x64 and arm64, glibc), and Windows x64. Alpine/musl is not built yet; on any unsupported platform the extension names the exact file it could not find rather than failing silently, and you can build one with `npm run build:kernel && npm run package:extension`.
 
 中文安装说明见 [安装说明.md](artifacts/pi-extension/pi-fast-grep/安装说明.md)。
 

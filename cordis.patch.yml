@@ -1,0 +1,10 @@
+# Replace the harness's spawn-based search suite with the indexed one.
+#
+# The tool registry rejects a duplicate name outright -- there is no
+# last-one-wins -- so the built-in row is disabled and this plugin supplies both
+# `grep` and `glob` in its place.
+- id: tool-fs-search
+  disabled: true
+- insert:
+    - id: snapgrep
+      name: 'snapgrep/dsh'

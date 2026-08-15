@@ -1,16 +1,18 @@
 {
   "name": "snapgrep",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "main": "./dist/src/packaged-extension.js",
   "exports": {
-    ".": "./dist/src/packaged-extension.js"
+    ".": "./dist/src/packaged-extension.js",
+    "./dsh": "./dist/src/dsh-plugin.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/src/*.js",
-    "native/kernel/binding/*.node",
-    "README.md"
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
   ],
   "pi": {
     "extensions": [
@@ -52,5 +54,40 @@
   },
   "napi": {
     "binaryName": "pi-fast-grep-kernel"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Owen718/snapgrep.git"
+  },
+  "homepage": "https://github.com/Owen718/snapgrep#readme",
+  "bugs": {
+    "url": "https://github.com/Owen718/snapgrep/issues"
+  },
+  "keywords": [
+    "grep",
+    "ripgrep",
+    "code-search",
+    "trigram",
+    "index",
+    "pi",
+    "pi-coding-agent",
+    "dsh",
+    "deepseek-harness",
+    "oh-my-pi",
+    "coding-agent",
+    "napi-rs"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "optionalDependencies": {
+    "snapgrep-darwin-arm64": "0.1.0",
+    "snapgrep-darwin-x64": "0.1.0",
+    "snapgrep-linux-x64-gnu": "0.1.0",
+    "snapgrep-linux-arm64-gnu": "0.1.0",
+    "snapgrep-win32-x64-msvc": "0.1.0"
   }
 }

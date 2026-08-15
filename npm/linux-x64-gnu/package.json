@@ -1,0 +1,26 @@
+{
+  "name": "snapgrep-linux-x64-gnu",
+  "version": "0.1.0",
+  "description": "Prebuilt snapgrep search kernel for linux x64.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Owen718/snapgrep.git"
+  },
+  "main": "pi-fast-grep-kernel.linux-x64-gnu.node",
+  "files": [
+    "pi-fast-grep-kernel.linux-x64-gnu.node"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "libc": [
+    "glibc"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
