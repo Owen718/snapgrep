@@ -1,6 +1,6 @@
 {
   "name": "snapgrep-darwin-arm64",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Prebuilt snapgrep search kernel for darwin arm64.",
   "license": "MIT",
   "repository": {

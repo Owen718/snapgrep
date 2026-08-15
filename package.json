@@ -1,6 +1,6 @@
 {
   "name": "snapgrep",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "./dist/src/packaged-extension.js",
   "exports": {
@@ -36,11 +36,6 @@
     "benchmark:generate-tail": "tsx scripts/generate-tail-corpus.ts",
     "benchmark:generate-queries": "tsx benchmarks/generate-queries.ts",
     "benchmark:prepare-typical": "tsx scripts/prepare-typical-corpus.ts"
-  },
-  "dependencies": {
-    "@earendil-works/pi-ai": "0.81.1",
-    "@earendil-works/pi-coding-agent": "0.81.1",
-    "@ff-labs/fff-node": "0.10.1"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
@@ -84,10 +79,26 @@
     }
   },
   "optionalDependencies": {
-    "snapgrep-darwin-arm64": "0.1.0",
-    "snapgrep-darwin-x64": "0.1.0",
-    "snapgrep-linux-x64-gnu": "0.1.0",
-    "snapgrep-linux-arm64-gnu": "0.1.0",
-    "snapgrep-win32-x64-msvc": "0.1.0"
+    "snapgrep-darwin-arm64": "0.1.1",
+    "snapgrep-darwin-x64": "0.1.1",
+    "snapgrep-linux-x64-gnu": "0.1.1",
+    "snapgrep-linux-arm64-gnu": "0.1.1",
+    "snapgrep-windows-x64": "0.1.1"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": ">=0.81.0",
+    "@deepseek-ai/dsh-tools": ">=0.0.1",
+    "@ff-labs/fff-node": ">=0.10.0"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@ff-labs/fff-node": {
+      "optional": true
+    }
   }
 }

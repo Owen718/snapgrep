@@ -33,8 +33,8 @@ export async function resolvePackagedKernelAddonPath(
   // is what finds it. Downloaded as a release archive it sits beside this
   // module instead. Both layouts are supported, and the resolver runs first
   // because an npm install is the more specific answer.
-  for (const target of targets) {
-    const resolved = resolveFromNodeModules(`snapgrep-${target}`, moduleDirectory);
+  for (const packageName of addonPackageNames(platform, architecture)) {
+    const resolved = resolveFromNodeModules(packageName, moduleDirectory);
     if (resolved !== undefined) return resolved;
   }
 
@@ -57,7 +57,8 @@ export async function resolvePackagedKernelAddonPath(
   }
   throw new Error(
     `packaged kernel addon is missing for ${platform}-${architecture}; `
-    + `no installed snapgrep-${targets[0]} package, and none of: ${candidates.join(", ")}`,
+    + `no installed ${addonPackageNames(platform, architecture)[0]} package, `
+    + `and none of: ${candidates.join(", ")}`,
   );
 }
 
@@ -81,6 +82,26 @@ function resolveFromNodeModules(
 }
 
 /**
+ * Package names to try, most specific first.
+ *
+ * These deliberately do not track the filenames below. npm rejected
+ * `snapgrep-win32-x64` as spam, so the Windows package is published as
+ * `snapgrep-windows-x64` while the file inside keeps napi's own
+ * `win32-x64-msvc` name. Deriving one from the other would silently break
+ * Windows resolution.
+ */
+function addonPackageNames(platform: string, architecture: string): string[] {
+  if (platform === "win32") return [`snapgrep-windows-${architecture}`];
+  if (platform === "linux") {
+    return [
+      `snapgrep-linux-${architecture}-gnu`,
+      `snapgrep-linux-${architecture}-musl`,
+    ];
+  }
+  return [`snapgrep-${platform}-${architecture}`];
+}
+
+/**
  * Addon basenames to try, most specific first.
  *
  * On Linux, napi names the output after the full Rust target triple, so a
@@ -91,6 +112,7 @@ function resolveFromNodeModules(
  */
 function addonTargets(platform: string, architecture: string): string[] {
   const base = `${platform}-${architecture}`;
+  if (platform === "win32") return [`${base}-msvc`, base];
   if (platform !== "linux") return [base];
   return [`${base}-gnu`, `${base}-musl`, base];
 }

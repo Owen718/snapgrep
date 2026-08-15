@@ -1,6 +1,6 @@
 {
-  "name": "snapgrep-win32-x64-msvc",
-  "version": "0.1.0",
+  "name": "snapgrep-windows-x64",
+  "version": "0.1.1",
   "description": "Prebuilt snapgrep search kernel for win32 x64.",
   "license": "MIT",
   "repository": {
