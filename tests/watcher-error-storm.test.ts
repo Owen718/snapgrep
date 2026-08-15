@@ -81,3 +81,34 @@ describe("recursive watcher error bursts", () => {
     expect(seen).toHaveBeenCalledTimes(3);
   });
 });
+
+describe("watcher scope", () => {
+  it("does not watch a directory that is not a repository", async () => {
+    const { OptInKernelEngine } = await import("../src/kernel-engine.js");
+    const { resolvePackagedKernelAddonPath } = await import("../src/addon-path.js");
+    const { mkdtemp, mkdir, writeFile, realpath, rm } = await import("node:fs/promises");
+    const { tmpdir } = await import("node:os");
+    const path = (await import("node:path")).default;
+
+    const addonPath = await resolvePackagedKernelAddonPath(
+      path.resolve(import.meta.dirname, "..", "src"),
+    ).catch(() => undefined);
+    if (addonPath === undefined) return; // native addon not built in this run
+
+    const root = await realpath(await mkdtemp(path.join(tmpdir(), "snapgrep-nogit-")));
+    await mkdir(path.join(root, "src"), { recursive: true });
+    await writeFile(path.join(root, "src", "a.ts"), "needle\n");
+
+    const engine = new OptInKernelEngine({ root, addonPath });
+    try {
+      // Starting outside a repository is expected to fail over to ripgrep.
+      await engine.start().catch(() => undefined);
+      // The point of the change: no recursive watch was installed for a tree
+      // that can never produce a clean snapshot.
+      expect((engine as unknown as { watcher?: unknown }).watcher).toBeUndefined();
+    } finally {
+      engine.close();
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+});

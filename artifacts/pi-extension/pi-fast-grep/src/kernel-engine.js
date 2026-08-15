@@ -364,16 +364,29 @@ export class OptInKernelEngine {
         this.generation += 1;
         this.canonicalRoot = undefined;
         this.installMutationFeed();
-        // A recovery generation starts immediately after a known Pi mutation.
-        // A newly-created FSEvents stream can replay that already-completed event
-        // and spuriously invalidate the new snapshot. Its trusted host feed is the
-        // authoritative barrier; clean startup generations retain the watcher as
-        // a bonus signal for unmarked external changes.
-        if (!sessionWorktreeSnapshot)
-            this.installWatcher();
         const sourceGeneration = this.generation;
         try {
             this.canonicalRoot = await realpath(this.root);
+            // A recovery generation starts immediately after a known Pi mutation.
+            // A newly-created FSEvents stream can replay that already-completed event
+            // and spuriously invalidate the new snapshot. Its trusted host feed is the
+            // authoritative barrier; clean startup generations retain the watcher as
+            // a bonus signal for unmarked external changes.
+            //
+            // Correctness does not rest on this watcher, which is why it can wait
+            // until the workspace is known to be a repository at all. Without a
+            // trusted feed the capture is re-taken and compared by identity before
+            // the index is adopted; with one, the host's mark is the barrier. The
+            // watcher only shortens the window in which an unmarked outside write
+            // goes unnoticed -- and an unmarked outside write is already outside the
+            // freshness guarantee.
+            //
+            // Skipping non-repositories matters: the kernel only serves a clean Git
+            // snapshot, so a recursive watch over, say, a home directory buys
+            // nothing and can exhaust the platform's watch descriptors (issue #1).
+            if (!sessionWorktreeSnapshot && await this.rootIsGitRepository(signal)) {
+                this.installWatcher();
+            }
             const binding = loadKernelBinding(this.addonPath);
             const addonSha256 = await hashFile(this.addonPath, signal);
             const fusedColdEligible = this.trustedMutationFeed !== undefined
@@ -968,6 +981,29 @@ export class OptInKernelEngine {
         this.indexedFiles = sourceSnapshot.files;
         this.invalidReason = undefined;
         previous?.close();
+    }
+    /**
+     * Whether the root sits inside a Git repository at all.
+     *
+     * Deliberately cheap: `rev-parse --git-dir` resolves the repository without
+     * walking the tree, so this costs a process launch rather than a scan. A
+     * non-repository cannot produce a clean snapshot, so every query there falls
+     * back to ripgrep regardless.
+     */
+    async rootIsGitRepository(signal) {
+        try {
+            const result = await runCommand("git", ["-C", this.root, "rev-parse", "--git-dir"], {
+                allowExitCodes: [0, 128, 129],
+                env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
+                ...(signal === undefined ? {} : { signal }),
+            });
+            return result.code === 0;
+        }
+        catch {
+            // Git missing or unrunnable is not a reason to fail startup; it just
+            // means the watcher is not worth installing.
+            return false;
+        }
     }
     installWatcher() {
         try {
