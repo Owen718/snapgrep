@@ -10,6 +10,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 
+import { vacuumStaleIndexTemporaries } from "./index-manager.js";
 import {
   bigintToSafeNumber,
   loadKernelBinding,
@@ -569,6 +570,7 @@ export class OptInKernelEngine {
     const sourceGeneration = this.generation;
 
     try {
+      await vacuumStaleIndexTemporaries(path.dirname(this.indexPath));
       this.canonicalRoot = await realpath(this.root);
       // A recovery generation starts immediately after a known Pi mutation.
       // A newly-created FSEvents stream can replay that already-completed event
@@ -802,7 +804,15 @@ export class OptInKernelEngine {
         openStats,
       };
     } catch (error) {
-      this.markWorkspaceChanged("kernel_start_failed");
+      if (nativeKernelErrorCode(error) === "PFG_SOURCE_TOO_LARGE") {
+        try {
+          await this.removePersistedGeneration();
+        } finally {
+          this.markWorkspaceChanged("kernel_start_failed");
+        }
+      } else {
+        this.markWorkspaceChanged("kernel_start_failed");
+      }
       throw error;
     }
   }
@@ -1695,6 +1705,12 @@ export class OptInKernelEngine {
   }
 
   private async removeManifestDurably(): Promise<void> {
+    await rm(this.manifestPath, { force: true });
+    await this.syncManifestDirectory();
+  }
+
+  private async removePersistedGeneration(): Promise<void> {
+    await rm(this.indexPath, { force: true });
     await rm(this.manifestPath, { force: true });
     await this.syncManifestDirectory();
   }

@@ -390,6 +390,7 @@ fn kernel_error(error: &KernelError) -> Error {
         KernelError::Aborted => "PFG_ABORTED",
         KernelError::InvalidRelativePath { .. } => "PFG_INVALID_RELATIVE_PATH",
         KernelError::SourceChanged(_) => "PFG_SOURCE_CHANGED",
+        KernelError::SourceFileTooLarge { .. } => "PFG_SOURCE_TOO_LARGE",
         KernelError::Corrupt(_) => "PFG_CORRUPT_INDEX",
         KernelError::TooLarge => "PFG_TOO_LARGE",
         KernelError::UnsupportedPlatform(_) => "PFG_UNSUPPORTED_PLATFORM",

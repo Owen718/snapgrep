@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, open, readFile, readdir, realpath, rm, symlink, utimes, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -1003,6 +1003,53 @@ describe.skipIf(!nativeEnabled)("opt-in kernel engine", () => {
     await expect(
       readFile(`${engine.indexPath}.manifest.json`, "utf8"),
     ).rejects.toMatchObject({ code: "ENOENT" });
+    engine.close();
+  });
+
+  it("rejects a checkpoint-sized source before indexing and removes the old persisted generation", async () => {
+    const builder = new OptInKernelEngine({ root: fixture, addonPath });
+    await builder.start();
+    builder.close();
+    await expect(readFile(builder.indexPath)).resolves.not.toHaveLength(0);
+    await expect(readFile(`${builder.indexPath}.manifest.json`, "utf8")).resolves.toContain(
+      "pi-fast-grep-kernel-manifest/v2",
+    );
+
+    const checkpointDir = path.join(fixture, "experiments", "checkpoint-500");
+    const checkpointPath = path.join(checkpointDir, "diffusion_pytorch_model.safetensors");
+    await mkdir(checkpointDir, { recursive: true });
+    const checkpoint = await open(checkpointPath, "w");
+    try {
+      await checkpoint.truncate(128 * 1024 * 1024 + 1);
+    } finally {
+      await checkpoint.close();
+    }
+
+    const engine = new OptInKernelEngine({
+      root: fixture,
+      addonPath,
+      trustedMutationFeed: new KernelMutationFeed(),
+      sessionWorktreeSnapshot: true,
+    });
+    await expect(engine.start()).rejects.toThrow("per-file kernel limit");
+    await expect(readFile(engine.indexPath)).rejects.toMatchObject({ code: "ENOENT" });
+    await expect(readFile(`${engine.indexPath}.manifest.json`, "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+    engine.close();
+  });
+
+  it("reclaims stale Rust temporary files before kernel startup", async () => {
+    const indexDir = path.join(fixture, ".pi", "index");
+    await mkdir(indexDir, { recursive: true });
+    const staleTemp = path.join(indexDir, ".tmpABC123");
+    await writeFile(staleTemp, "interrupted generation\n");
+    const staleDate = new Date(Date.now() - 2 * 60 * 60 * 1_000);
+    await utimes(staleTemp, staleDate, staleDate);
+
+    const engine = new OptInKernelEngine({ root: fixture, addonPath });
+    await engine.start();
+    await expect(readFile(staleTemp)).rejects.toMatchObject({ code: "ENOENT" });
     engine.close();
   });
 

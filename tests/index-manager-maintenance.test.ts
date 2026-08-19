@@ -18,6 +18,7 @@ import {
   installProjectIndexIgnore,
   overlayShardPrefix,
   vacuumOwnedIndexArtifacts,
+  vacuumStaleIndexTemporaries,
 } from "../src/index-manager.js";
 
 const execFileAsync = promisify(execFile);
@@ -161,11 +162,19 @@ describe("vacuumOwnedIndexArtifacts", () => {
 
     const oldTemp = path.join(indexDir, "repo_v16.00000.zoekt.crashed.tmp");
     const freshTemp = path.join(indexDir, "repo_v16.00000.zoekt.active.tmp");
+    const oldRustTemp = path.join(indexDir, ".tmpABC123");
+    const freshRustTemp = path.join(indexDir, ".tmpXYZ789");
+    const unrelatedDotTemp = path.join(indexDir, ".tmp-not-owned");
     await writeFile(oldTemp, "old temporary\n");
     await writeFile(freshTemp, "fresh temporary\n");
+    await writeFile(oldRustTemp, "old Rust temporary\n");
+    await writeFile(freshRustTemp, "fresh Rust temporary\n");
+    await writeFile(unrelatedDotTemp, "unrelated\n");
     const nowMs = Date.parse("2026-07-23T00:00:00.000Z");
     await utimes(oldTemp, new Date(nowMs - 2 * 60 * 60 * 1_000), new Date(nowMs - 2 * 60 * 60 * 1_000));
     await utimes(freshTemp, new Date(nowMs), new Date(nowMs));
+    await utimes(oldRustTemp, new Date(nowMs - 2 * 60 * 60 * 1_000), new Date(nowMs - 2 * 60 * 60 * 1_000));
+    await utimes(freshRustTemp, new Date(nowMs), new Date(nowMs));
 
     const preserved = [
       "github.com%2Fexample%2Frepo_v16.00000.zoekt",
@@ -185,12 +194,35 @@ describe("vacuumOwnedIndexArtifacts", () => {
       await expect(exists(path.join(indexDir, file))).resolves.toBe(false);
     }
     await expect(exists(oldTemp)).resolves.toBe(false);
+    await expect(exists(oldRustTemp)).resolves.toBe(false);
     await expect(exists(freshTemp)).resolves.toBe(true);
+    await expect(exists(freshRustTemp)).resolves.toBe(true);
+    await expect(exists(unrelatedDotTemp)).resolves.toBe(true);
     for (const file of preserved) {
       await expect(exists(path.join(indexDir, file))).resolves.toBe(true);
     }
     expect(result.removedFiles).toBeGreaterThanOrEqual(removed.length + 2);
     expect(result.reclaimedBytes).toBeGreaterThan(0);
     expect(result.completedAt).toBe("2026-07-23T00:00:00.000Z");
+  });
+
+  test("kernel-only vacuum removes Rust NamedTempFile leftovers without overlay cleanup", async () => {
+    const root = await temporaryRoot("pi-fast-grep-kernel-vacuum-");
+    const indexDir = path.join(root, "index");
+    await mkdir(path.join(indexDir, "overlay-source"), { recursive: true });
+    const stale = path.join(indexDir, ".tmpK3RN3L");
+    await writeFile(stale, "crashed kernel generation\n");
+    const nowMs = Date.parse("2026-08-19T00:00:00.000Z");
+    await utimes(stale, new Date(nowMs - 2 * 60 * 60 * 1_000), new Date(nowMs - 2 * 60 * 60 * 1_000));
+
+    const result = await vacuumStaleIndexTemporaries(indexDir, {
+      nowMs,
+      staleTempMinAgeMs: 60 * 60 * 1_000,
+    });
+
+    await expect(exists(stale)).resolves.toBe(false);
+    await expect(exists(path.join(indexDir, "overlay-source"))).resolves.toBe(true);
+    expect(result.removedFiles).toBe(1);
+    expect(result.reclaimedBytes).toBeGreaterThan(0);
   });
 });
