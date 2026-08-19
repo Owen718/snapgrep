@@ -179,6 +179,19 @@ Currently falling back:
 
 These are correctness boundaries, not missing features. Each one is a case where matching ripgrep's exact behaviour has not been proven yet, so the index refuses to guess.
 
+### Resource safety
+
+The kernel refuses to copy any individual source file larger than 128 MiB into
+its persisted index. This bounds peak per-file memory and prevents a single
+accidentally unignored model checkpoint, dataset, or generated artifact from
+consuming multiple gigabytes of index space. The kernel fails closed, so the
+host serves the complete search through ripgrep until those files are ignored
+or moved.
+
+Kernel startup also reclaims stale `.tmpXXXXXX` atomic-write files left by an
+interrupted native build. Fresh temporaries are preserved so a concurrent writer
+is never removed.
+
 ## Staying fresh
 
 An index is only useful if it reflects what you just edited.

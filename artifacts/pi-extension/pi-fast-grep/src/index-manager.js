@@ -26,15 +26,12 @@ const IGNORED_WORKSPACE_DIRS = [
     "target",
     ".next",
 ];
-export function overlayShardPrefix(root) {
-    return `fast-grep-overlay-${Buffer.from(path.resolve(root)).toString("base64url").slice(-24)}`;
+const RUST_NAMED_TEMP_PATTERN = /^\.tmp[A-Za-z0-9]{6}$/u;
+function ownedTemporaryName(name) {
+    return name.endsWith(".tmp") || RUST_NAMED_TEMP_PATTERN.test(name);
 }
-/**
- * Remove only artifacts owned by the workspace-overlay lifecycle plus stale
- * crashed-writer temporaries. Base shards (including compound shards) are
- * deliberately never inferred from a broad `*.zoekt` glob.
- */
-export async function vacuumOwnedIndexArtifacts(indexDir, options = {}) {
+/** Remove stale atomic-write temporaries without touching published indexes. */
+export async function vacuumStaleIndexTemporaries(indexDir, options = {}) {
     const nowMs = options.nowMs ?? Date.now();
     const staleTempMinAgeMs = options.staleTempMinAgeMs ?? STALE_TEMP_MIN_AGE_MS;
     let removedFiles = 0;
@@ -47,21 +44,54 @@ export async function vacuumOwnedIndexArtifacts(indexDir, options = {}) {
         return { removedFiles, reclaimedBytes, completedAt: new Date(nowMs).toISOString() };
     }
     for (const entry of entries) {
+        if (!entry.isFile() || !ownedTemporaryName(entry.name))
+            continue;
+        const target = path.join(indexDir, entry.name);
+        let info;
+        try {
+            info = await stat(target);
+        }
+        catch {
+            continue;
+        }
+        if (nowMs - info.mtimeMs < staleTempMinAgeMs)
+            continue;
+        await rm(target, { force: true });
+        removedFiles += 1;
+        reclaimedBytes += info.size;
+    }
+    return {
+        removedFiles,
+        reclaimedBytes,
+        completedAt: new Date(nowMs).toISOString(),
+    };
+}
+export function overlayShardPrefix(root) {
+    return `fast-grep-overlay-${Buffer.from(path.resolve(root)).toString("base64url").slice(-24)}`;
+}
+/**
+ * Remove only artifacts owned by the workspace-overlay lifecycle plus stale
+ * crashed-writer temporaries. Base shards (including compound shards) are
+ * deliberately never inferred from a broad `*.zoekt` glob.
+ */
+export async function vacuumOwnedIndexArtifacts(indexDir, options = {}) {
+    const nowMs = options.nowMs ?? Date.now();
+    const temporaries = await vacuumStaleIndexTemporaries(indexDir, options);
+    let removedFiles = temporaries.removedFiles;
+    let reclaimedBytes = temporaries.reclaimedBytes;
+    let entries;
+    try {
+        entries = await readdir(indexDir, { withFileTypes: true });
+    }
+    catch {
+        return { removedFiles, reclaimedBytes, completedAt: new Date(nowMs).toISOString() };
+    }
+    for (const entry of entries) {
         const target = path.join(indexDir, entry.name);
         const ownedSessionArtifact = entry.name === "overlay-source"
             || entry.name === "overlay.meta.json"
             || OWNED_OVERLAY_SHARD_PATTERN.test(entry.name);
-        let staleTemporary = false;
-        if (entry.isFile() && entry.name.endsWith(".tmp")) {
-            try {
-                const info = await stat(target);
-                staleTemporary = nowMs - info.mtimeMs >= staleTempMinAgeMs;
-            }
-            catch {
-                // A concurrent cleanup already won the race.
-            }
-        }
-        if (!ownedSessionArtifact && !staleTemporary)
+        if (!ownedSessionArtifact)
             continue;
         const bytes = entry.isDirectory()
             ? await directoryBytes(target)

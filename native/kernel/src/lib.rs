@@ -61,6 +61,7 @@ const HEADER_CHECKSUM_OFFSET: usize = 168;
 const CHECKSUM_LEN: usize = 32;
 const SOURCE_DIGEST_BUFFER_LEN: usize = 64 * 1024;
 const INDEX_WRITE_BUFFER_LEN: usize = 64 * 1024;
+const MAX_SOURCE_FILE_BYTES: u64 = 128 * 1024 * 1024;
 
 /// Errors are typed so the future N-API layer can distinguish unsupported
 /// queries from corrupt/stale indexes and ordinary I/O failures.
@@ -76,6 +77,14 @@ pub enum KernelError {
     InvalidRelativePath { path: String, reason: &'static str },
     #[error("source file changed while the index was being built: {0}")]
     SourceChanged(String),
+    #[error(
+        "source file `{path}` is {bytes} bytes; the per-file kernel limit is {max_bytes} bytes"
+    )]
+    SourceFileTooLarge {
+        path: String,
+        bytes: u64,
+        max_bytes: u64,
+    },
     #[error("index is corrupt: {0}")]
     Corrupt(String),
     #[error("index is too large for this process")]
@@ -368,6 +377,7 @@ impl SourceContentDigester {
             #[cfg(test)]
             phase_hook,
         )?;
+        ensure_source_file_size(relative_path, before_handle.len())?;
         #[cfg(test)]
         phase_hook(SourceDigestPhase::Opened, &joined)?;
 
@@ -2650,6 +2660,7 @@ impl TrustedBuildRoot {
                 reason: "path is not a regular non-symlink file",
             });
         }
+        ensure_source_file_size(relative_path, before_metadata.len())?;
         let before_identity = stable_source_identity(&before_metadata);
         let before = snapshot_from_metadata(&before_metadata);
         let mut content = Vec::new();
@@ -2731,6 +2742,7 @@ fn read_source_legacy(
         });
     }
     let before = source_snapshot(&canonical_file)?;
+    ensure_source_file_size(relative_path, before.len)?;
     let mut content = Vec::new();
     File::open(&canonical_file)
         .map_err(|source| io_error("opening source file", &canonical_file, source))?
@@ -2755,6 +2767,17 @@ fn source_snapshot(path: &Path) -> Result<SourceSnapshot, KernelError> {
         });
     }
     Ok(snapshot_from_metadata(&metadata))
+}
+
+fn ensure_source_file_size(relative_path: &str, bytes: u64) -> Result<(), KernelError> {
+    if bytes <= MAX_SOURCE_FILE_BYTES {
+        return Ok(());
+    }
+    Err(KernelError::SourceFileTooLarge {
+        path: relative_path.to_owned(),
+        bytes,
+        max_bytes: MAX_SOURCE_FILE_BYTES,
+    })
 }
 
 fn open_source_no_follow(path: &Path) -> Result<File, KernelError> {
@@ -4565,6 +4588,47 @@ mod tests {
                 .expect("query old generation")
                 .total_occurrences,
             1,
+        );
+    }
+
+    #[test]
+    fn oversized_source_is_rejected_before_a_generation_is_published() {
+        let directory = tempfile::tempdir().expect("tempdir");
+        let source_path = directory.path().join("checkpoint.safetensors");
+        let source = OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(&source_path)
+            .expect("create sparse checkpoint");
+        source
+            .set_len(MAX_SOURCE_FILE_BYTES + 1)
+            .expect("size sparse checkpoint");
+        let index_path = directory.path().join(".pi/index/core.pfg");
+
+        let result = build_index_with_source_digest(
+            directory.path(),
+            &["checkpoint.safetensors".into()],
+            &index_path,
+        );
+
+        assert!(matches!(
+            result,
+            Err(KernelError::SourceFileTooLarge {
+                bytes,
+                max_bytes: MAX_SOURCE_FILE_BYTES,
+                ..
+            }) if bytes == MAX_SOURCE_FILE_BYTES + 1
+        ));
+        assert!(!index_path.exists());
+        let index_dir = index_path.parent().expect("index parent");
+        assert!(
+            fs::read_dir(index_dir)
+                .expect("read index directory")
+                .all(|entry| !entry
+                    .expect("directory entry")
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".tmp")),
         );
     }
 

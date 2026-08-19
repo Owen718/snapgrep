@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { createReadStream, watch } from "node:fs";
 import { lstat, open, readFile, realpath, rename, rm, } from "node:fs/promises";
 import path from "node:path";
+import { vacuumStaleIndexTemporaries } from "./index-manager.js";
 import { bigintToSafeNumber, loadKernelBinding, nativeKernelErrorCode, } from "./kernel-binding.js";
 import { runCommand } from "./process.js";
 import { listRipgrepFiles, runRipgrep } from "./rg.js";
@@ -366,6 +367,7 @@ export class OptInKernelEngine {
         this.installMutationFeed();
         const sourceGeneration = this.generation;
         try {
+            await vacuumStaleIndexTemporaries(path.dirname(this.indexPath));
             this.canonicalRoot = await realpath(this.root);
             // A recovery generation starts immediately after a known Pi mutation.
             // A newly-created FSEvents stream can replay that already-completed event
@@ -561,7 +563,17 @@ export class OptInKernelEngine {
             };
         }
         catch (error) {
-            this.markWorkspaceChanged("kernel_start_failed");
+            if (nativeKernelErrorCode(error) === "PFG_SOURCE_TOO_LARGE") {
+                try {
+                    await this.removePersistedGeneration();
+                }
+                finally {
+                    this.markWorkspaceChanged("kernel_start_failed");
+                }
+            }
+            else {
+                this.markWorkspaceChanged("kernel_start_failed");
+            }
             throw error;
         }
     }
@@ -1265,6 +1277,11 @@ export class OptInKernelEngine {
         }
     }
     async removeManifestDurably() {
+        await rm(this.manifestPath, { force: true });
+        await this.syncManifestDirectory();
+    }
+    async removePersistedGeneration() {
+        await rm(this.indexPath, { force: true });
         await rm(this.manifestPath, { force: true });
         await this.syncManifestDirectory();
     }
